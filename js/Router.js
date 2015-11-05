@@ -4,8 +4,21 @@ import moment from 'moment';
 import Backbone from 'backbone';
 import React from 'react';
 import ReactDom from 'react-dom';
-import {HomeView,RegView,UserView,DeckView,AddDeckView} from './views';
-import {userCollection,userModel,cardModel,cardCollection} from './resources';
+import {
+  UserModel,
+  UserCollection,
+  CardModel,
+  CardCollection,
+} from './resources';
+import {  
+  HomeView,
+  RegView,
+  UserView,
+  NavView,
+  EditCardView,
+  AddCardView,
+} from './views';
+
 
 let Router = Backbone.Router.extend({
   
@@ -28,7 +41,7 @@ let Router = Backbone.Router.extend({
     this.el = appElement;
     this.deck = new deckCollection();
     this.card = new cardCollection();
-    this.user = new userCollection();
+    this.user = new UserCollection();
     let router = this;
   },
 
@@ -89,9 +102,9 @@ let Router = Backbone.Router.extend({
     this.deck.fetch().then(() => {
     this.render(
       <deckViewComponent
-      onCardSelect ={() => this.goto('card/:id')}
-      onAddCardClick={() => this.goto('addCard')}
-      onBackBtnClick={() => this.goto('userView')}/>
+      onCardSelect = {() => this.goto('card/:id')}
+      onAddCardClick = {() => this.goto('addCard')}
+      onBackBtnClick = {() => this.goto('userView')}/>
     );
    });  
   },
@@ -137,7 +150,20 @@ addDeck(){
     Backbone.history.start();
   },
 
-  
+  addCard() {
+    this.render(
+      <AddCardView 
+        onCancelClick={this.goto('deck/:deckID')}
+        onAddCard={(quest, ans) => {
+          let cardAddition = new CardModel({
+            Question: quest,
+            Answer: ans
+          })
+          cardAddition.save().then(()=> this.goto('deck/:deckID'));
+        }}/>
+    );
+  },
+
 });
 
 export default Router;
