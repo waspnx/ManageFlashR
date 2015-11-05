@@ -4,10 +4,25 @@ import moment from 'moment';
 import Backbone from 'backbone';
 import React from 'react';
 import ReactDom from 'react-dom';
-import {HomeView,RegView,UserView,AddDeckView} from './views';
-import {userCollection,userModel,cardModel,cardCollection,deckModel} from './resources';
-import deckCollection from './resources/deck-collection';
 import DeckView from './views/deckView';
+import DeckCollection from './resources/deck-collection';
+
+import {
+  UserModel,
+  UserCollection,
+  CardModel,
+  CardCollection,
+} from './resources';
+
+import {  
+  HomeView,
+  RegView,
+  UserView,
+  NavView,
+  EditCardView,
+  AddCardView,
+} from './views';
+
 let Router = Backbone.Router.extend({
   
   routes: {
@@ -27,9 +42,9 @@ let Router = Backbone.Router.extend({
 
   initialize(appElement) {
     this.el = appElement;
-    this.deck = new deckCollection();
-    this.card = new cardCollection();
-    this.user = new userCollection();
+    this.deck = new DeckCollection();
+    this.card = new CardCollection();
+    this.user = new UserCollection();
     let router = this;
   },
 
@@ -61,7 +76,7 @@ let Router = Backbone.Router.extend({
 
   registerRequest() {
     let request = $.ajax({
-      url: 'peaceful-water-4820.herokuapp.com',
+      url: 'https://rocky-garden-9800.herokuapp.com',
       method: 'POST',
       data: {
         user: {
@@ -86,7 +101,7 @@ let Router = Backbone.Router.extend({
     });
   },
 
-  deckView(deckID) {
+  deckView(id) {
     this.deck.fetch().then(() => {
     this.render(
       <DeckView
@@ -109,12 +124,9 @@ addDeck(){
       })
       newDeck.save().then(() => {
         this.goto('addCard')})
-      }
-    }/>
-  )
+      }}/>
+  );
 },
- 
-
 
  imageView() {
     
@@ -124,6 +136,19 @@ addDeck(){
     Backbone.history.start();
   },
 
+  addCard() {
+    this.render(
+      <AddCardView 
+        onCancelClick={this.goto('deck/:deckID')}
+        onAddCard={(quest, ans) => {
+          let cardAddition = new CardModel({
+            Question: quest,
+            Answer: ans
+          })
+          cardAddition.save().then(()=> this.goto('deck/:deckID'));
+        }}/>
+    );
+  },
 
 });
 

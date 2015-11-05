@@ -2,36 +2,33 @@ import React from 'react';
 
 export default React.createClass({
 
-  //data is placeholder for the value being passed in
-  getInitialState() {
-    return {
-      Answer: this.props.data.Answer,
-      Question: this.props.data.Question
-    };
+  submitHandler(e) {
+    e.preventDefault();
+    this.props.onAddCard(this.state.Answer, this.state.Question);
   },
-
   // e stands for event
   // setting changed state to new state (question and answer)
   updateQuestion(e) { 
-    let newValue = e.currentTarget.value;
+    let newQuestion = e.currentTarget.value;
 
     this.setState({
-      Question: newValue;
-    })
+      Question: newQuestion
+    });
   },
 
   updateAnswer(e) { 
-    let newValue = e.currentTarget.value;
+    let newAnswer = e.currentTarget.value;
 
     this.setState({
-      Answer: newValue;
-    })
+      Answer: newAnswer
+    });
   },
 
   submitHandler(e) {
     e.preventDefault();
     this.props.onSubmit(this.state.Question, this.state.Answer);
   },
+
 
   render() {
     return (
@@ -45,7 +42,7 @@ export default React.createClass({
           <input type="text" 
             onChange={this.updateAnswer} 
             value={this.state.Answer}/>
-          <button onClick={this}>Cancel</button>
+          <button onClick={this.props.cancelClick}>Cancel</button>
           <input type="submit" onClick={this.submitHandler}>Save Card</input>
         </form>
       </div>
