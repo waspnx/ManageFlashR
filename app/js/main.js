@@ -324,13 +324,13 @@ var Router = _backbone2['default'].Router.extend({
     });
   },
 
-  deckView: function deckView(deckID) {
+  deckView: function deckView(id) {
     var _this2 = this;
 
     this.deck.fetch().then(function () {
       _this2.render(_react2['default'].createElement('deckViewComponent', {
-        onPhotoSelect: function (id) {
-          return _this2.navigate('card/' + cardID, { trigger: true });
+        onCardSelect: function () {
+          return _this2.goto('card/:id');
         },
         onAddCardClick: function () {
           return _this2.goto('addCard');
