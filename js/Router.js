@@ -1,3 +1,5 @@
+import Backbone from 'backbone';
+import EditCardView from './views/editCard';
 
 let Router = Backbone.Router.extend({
   
@@ -34,7 +36,7 @@ let Router = Backbone.Router.extend({
 
   logout() {
     
-  }
+  },
 
   register() {
     //FIXME Function below belongs on actual Register VIEW. 
@@ -48,7 +50,7 @@ let Router = Backbone.Router.extend({
     //       password: '',
     //     }
     //   }
-  }
+  },
 
   home() {
     this.user.fetch().then(() => {
@@ -61,8 +63,19 @@ let Router = Backbone.Router.extend({
     });
   },
 
-  imageView() {
-    
+  imageView(id) {
+    let card = this.cardCollection.get(id)
+
+    if (card) {
+      this.render(
+        <EditCardView data={data}/>
+      );
+    } else {
+      card = this.cardCollection.fetch().then(() => {
+        this.render( <EditCardView data={data}/> );
+     
+      });
+    }
   },
 
 });
