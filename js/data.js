@@ -1,9 +1,5 @@
-const API_KEY = '?????';
-const APP_ID  = '?????';
-const APP_URL = 'https://api.?????';
+const APP_URL = 'https://rocky-garden-9800.herokuapp.com/';
 
 export {
-  API_KEY,
-  APP_ID,
-  APP_URL,
+  APP_URL
 };
