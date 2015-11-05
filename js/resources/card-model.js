@@ -5,6 +5,6 @@ export default Backbone.Model.extend({
 
   urlRoot: APP_URL, 
 
-  idAttribute: 'objectId'
+  idAttribute: 'id'
 
 });

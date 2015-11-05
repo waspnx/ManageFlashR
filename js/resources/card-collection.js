@@ -1,6 +1,6 @@
 import Backbone from 'backbone';
 import {APP_URL} from '../data';
-import CardModel from './card_model';
+import CardModel from './card-model';
 
 export default Backbone.Collection.extend({
 

@@ -4,25 +4,30 @@ import moment from 'moment';
 import Backbone from 'backbone';
 import React from 'react';
 import ReactDom from 'react-dom';
-import {HomeView,RegView,UserView} from './views'
-
+import {HomeView,RegView,UserView,DeckView,AddDeckView} from './views';
+import {userCollection,userModel,cardModel,cardCollection} from './resources';
 
 let Router = Backbone.Router.extend({
   
   routes: {
     ''              : 'home',
     'register'      : 'register',
-    // 'deck'          : 'userView',
-    // 'deck/:deckID'  : 'deckView',
-    // 'addDeck'       : 'addDeck',
-    // 'card/:cardID'  : 'imageView',
-    // 'addCard'       : 'addCard'
+    'deck'          : 'userView',
+    'deck/:deckID'  : 'deckView',
+    'addDeck'       : 'addDeck',
+    'card/:cardID'  : 'imageView',
+    'addCard'       : 'addCard'
+  },
+
+
+  start() {
+    Backbone.history.start();
   },
 
   initialize(appElement) {
     this.el = appElement;
-    // this.deck = new deckCollection();
-    // this.card = new cardCollection();
+    this.deck = new deckCollection();
+    this.card = new cardCollection();
     this.user = new userCollection();
     let router = this;
   },
@@ -34,6 +39,7 @@ let Router = Backbone.Router.extend({
   render(component){
     ReactDom.render(component, this.el);
   },
+
 
   loginRequest(){
     let request = $.ajax({
@@ -67,6 +73,7 @@ let Router = Backbone.Router.extend({
     });
   },
 
+
   home() {
     this.user.fetch().then(() => {
       this.render(<HomeView
@@ -74,11 +81,55 @@ let Router = Backbone.Router.extend({
         onLoginClick={() => this.goto('login')}
         onLogoutClick={()=> this.goto('logout')}
         onRegisterClick={() => this.goto('register')}/>
-        )
+      );
     });
   },
 
-  imageView() {
+  deckView(deckID) {
+    this.deck.fetch().then(() => {
+    this.render(
+      <deckViewComponent
+      onPhotoSelect ={id => this.navigate(`card/${cardID}`,{trigger: true})}
+      onAddCardClick={() => this.goto('addCard')}
+      onBackBtnClick={() => this.goto('userView')}/>
+    );
+   });  
+  },
+
+addDeck(){
+  this.render(
+    <addDeck
+    onBackBtnClick={() => this.goto('userView')}
+    onSubmitClick={(title) =>{
+      letnewQuestion = document.querySelector('.enterTitle').value;
+      letnewDeck = new DeckCollection ({
+        Title: title,
+      })
+      newDeck.save().then(() => {
+        this.goto('addCard')})
+      }
+    }/>
+  )
+},
+ 
+
+    addDeck() {  
+    this.render(
+      <addDeck
+        onBackBtnClick={() => this.goto('userView')}
+        onSubmitClick={(title) => {
+          let newDeck = new DeckCollection ({
+            Title: title,
+          });
+
+          newDeck.save().then(() => {
+            this.goto('userView');
+          });
+        }}/>
+    );
+  },
+
+ imageView() {
     
   },
 
@@ -86,6 +137,7 @@ let Router = Backbone.Router.extend({
     Backbone.history.start();
   },
 
+  
 });
 
 export default Router;
