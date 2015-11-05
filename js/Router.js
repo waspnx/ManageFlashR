@@ -100,12 +100,12 @@ let Router = Backbone.Router.extend({
 
   deckView(id) {
     this.deck.fetch().then(() => {
-    this.render(
-      <deckViewComponent
-      onCardSelect = {() => this.goto('card/:id')}
-      onAddCardClick = {() => this.goto('addCard')}
-      onBackBtnClick = {() => this.goto('userView')}/>
-    );
+      this.render(
+        <deckViewComponent
+        onCardSelect = {() => this.goto('card/:id')}
+        onAddCardClick = {() => this.goto('addCard')}
+        onBackBtnClick = {() => this.goto('userView')}/>
+      );
    });  
   },
 
