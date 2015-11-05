@@ -15,26 +15,9 @@ var _moment = require('moment');
 
 var _moment2 = _interopRequireDefault(_moment);
 
-<<<<<<< HEAD
-},{"jquery":2,"moment":3,"underscore":4}],2:[function(require,module,exports){
-/*!
- * jQuery JavaScript Library v2.1.4
- * http://jquery.com/
- *
- * Includes Sizzle.js
- * http://sizzlejs.com/
- *
- * Copyright 2005, 2014 jQuery Foundation, Inc. and other contributors
- * Released under the MIT license
- * http://jquery.org/license
- *
- * Date: 2015-04-28T16:01Z
- */
-=======
 var _backbone = require('backbone');
 
 var _backbone2 = _interopRequireDefault(_backbone);
->>>>>>> 01e2870bfebdead6a7ef209901345bf67e137024
 
 var _react = require('react');
 
@@ -90,6 +73,7 @@ var _reactDom2 = _interopRequireDefault(_reactDom);
 var _views = require('./views');
 
 var Router = _backbone2['default'].Router.extend({
+
   routes: {
     '': 'home',
     'register': 'register'
@@ -167,6 +151,8 @@ var Router = _backbone2['default'].Router.extend({
         } }));
     });
   },
+
+  imageView: function imageView() {},
 
   start: function start() {
     _backbone2['default'].history.start();
