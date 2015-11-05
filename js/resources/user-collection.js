@@ -8,10 +8,6 @@ let userCollection = Backbone.Collection.extend({
 
   model: userModel,
 
-  parse(data) {
-    return data.results;
-  }
-
 });
 
 export default userCollection;
