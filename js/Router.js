@@ -160,8 +160,7 @@ addDeck(){
             Answer: ans
           })
           cardAddition.save().then(()=> this.goto('deck/:deckID'));
-        }}
-      />
+        }}/>
     );
   },
 
