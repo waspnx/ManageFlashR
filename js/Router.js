@@ -48,26 +48,31 @@ let Router = Backbone.Router.extend({
   },
 
   deckView(deckID) {
+    this.deck.fetch().then(() => {
     this.render(
       <deckViewComponent
-      onAddCardClick={() => this.goto('addCard')}/>
+      onPhotoSelect ={id => this.navigate(`card/${cardID}`,{trigger: true})}
+      onAddCardClick={() => this.goto('addCard')}
+      onBackBtnClick={() => this.goto('userView')}/>
     );
+   });  
   },
 
-    addDeck() {  
-    this.render(
-      <addDeck
-        onBackBtnClick={() => this.goto('userView')}
-        onSubmitClick={(title) => {
-          let newDeck = new DeckCollection ({
-            Title: title,
-          });
-
-          newDeck.save().then(() => {
-            this.goto('userView');
-          });
-        }}/>
-    );
-  }
+addDeck(){
+  this.render(
+    <addDeck
+    onBackBtnClick={() => this.goto('userView')}
+    onSubmitClick={(title) =>{
+      letnewQuestion = document.querySelector('.enterTitle').value;
+      letnewDeck = new DeckCollection ({
+        Title: title,
+      })
+      newDeck.save().then(() => {
+        this.goto('addCard')})
+      }
+    }/>
+  )
+},
+ 
 
 });

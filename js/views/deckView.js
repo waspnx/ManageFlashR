@@ -25,14 +25,18 @@ processCards(data) {
   this.props.onAddCardClick(route);
 },
 
+backBtnHandler(route){
+  this.props.onBackBtnClick(route);
+}
 
   render() {
      <div className='deckViewContainer'>
 
         {this.props.cards().map(this.processCards)}
 
-      <div className="addCard">
+      <div className="btns">
         <i className="fa fa-plus" onClick={() => this.addCardHandler()}></i>
+        <button className="backBtn" onClick={() => this.backBtnHandler()}>back</i>
       </div>          
     </div>
 
