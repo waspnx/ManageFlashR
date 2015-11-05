@@ -1,5 +1,8 @@
+import Backbone from 'backbone';
+import EditCardView from './views/editCard';
 
 let Router = Backbone.Router.extend({
+  
   routes: {
     ''              : 'home',
     'register'      : 'register'
@@ -30,9 +33,10 @@ let Router = Backbone.Router.extend({
     ReactDom.render(component, this.el);
   },
 
+
   logout() {
     
-  }
+  },
 
   register() {
     //FIXME Function below belongs on actual Register VIEW. 
@@ -46,7 +50,7 @@ let Router = Backbone.Router.extend({
     //       password: '',
     //     }
     //   }
-  }
+  },
 
   home() {
     this.user.fetch().then(() => {
@@ -57,6 +61,21 @@ let Router = Backbone.Router.extend({
         onRegisterClick={() => this.goto('register')}
       );
     });
+  },
+
+  imageView(id) {
+    let card = this.cardCollection.get(id)
+
+    if (card) {
+      this.render(
+        <EditCardView data={data}/>
+      );
+    } else {
+      card = this.cardCollection.fetch().then(() => {
+        this.render( <EditCardView data={data}/> );
+     
+      });
+    }
   },
 
 });
