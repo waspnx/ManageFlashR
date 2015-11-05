@@ -128,6 +128,8 @@ exports.userCollection = _userCollection2['default'];
 exports.userModel = _userModel2['default'];
 exports.cardModel = _cardModel2['default'];
 exports.cardCollection = _cardCollection2['default'];
+exports.deckCollection = deckCollection;
+exports.deckModel = deckModel;
 
 },{"./card-collection":3,"./card-model":4,"./user-collection":6,"./user-model":7}],6:[function(require,module,exports){
 'use strict';
@@ -304,13 +306,13 @@ var Router = _backbone2['default'].Router.extend({
     });
   },
 
-  deckView: function deckView(deckID) {
+  deckView: function deckView(id) {
     var _this2 = this;
 
     this.deck.fetch().then(function () {
       _this2.render(_react2['default'].createElement('deckViewComponent', {
-        onPhotoSelect: function (id) {
-          return _this2.navigate('card/' + cardID, { trigger: true });
+        onCardSelect: function () {
+          return _this2.goto('card/:id');
         },
         onAddCardClick: function () {
           return _this2.goto('addCard');
