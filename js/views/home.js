@@ -55,13 +55,9 @@ export default React.createClass({
           <form className='loginForm'>
             <input type='text' placeholder='Username' className='username field'></input>
             <input type='password' placeholder='password' className='password field'></input>
-<<<<<<< HEAD
-            <input onSubmit={login()} type='submit'>Login</input>
-            <input type='button'>Register!</input>
-=======
+
             <input onSubmit={this.login(x)} type='submit'>Login</input>
             <input onClick={()=>this.selectRegHandler()} type='button'>Register!</input>
->>>>>>> 158a0fe19a0327fbfd45af14834ec4bb3f7dd382
           </form>
         </div>
       </div>

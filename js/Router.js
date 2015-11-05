@@ -1,26 +1,17 @@
-<<<<<<< HEAD
-import Backbone from 'backbone';
-import React from 'react';
-
-import deckViewComponent from './views/deckView';
-import HomeView from './views/home';
-=======
 import $ from 'jquery';
 import _ from 'underscore';
 import moment from 'moment';
 import Backbone from 'backbone';
 import React from 'react';
 import ReactDom from 'react-dom';
-import {HomeView,RegView,UserView} from './views'
-
->>>>>>> 158a0fe19a0327fbfd45af14834ec4bb3f7dd382
+import {HomeView,RegView,UserView,DeckView,AddDeckView} from './views'
+import UserCollection from './resources/user-collection' 
 
 let Router = Backbone.Router.extend({
   
   routes: {
     ''              : 'home',
     'register'      : 'register',
-<<<<<<< HEAD
     'deck'          : 'userView',
     'deck/:deckID'  : 'deckView',
     'addDeck'       : 'addDeck',
@@ -31,20 +22,18 @@ let Router = Backbone.Router.extend({
 
   start() {
     Backbone.history.start();
-=======
     // 'deck'          : 'userView',
     // 'deck/:deckID'  : 'deckView',
     // 'addDeck'       : 'addDeck',
     // 'card/:cardID'  : 'imageView',
     // 'addCard'       : 'addCard'
->>>>>>> 158a0fe19a0327fbfd45af14834ec4bb3f7dd382
   },
 
   initialize(appElement) {
     this.el = appElement;
     // this.deck = new deckCollection();
     // this.card = new cardCollection();
-    this.user = new userCollection();
+    this.user = new UserCollection();
     let router = this;
   },
 
@@ -56,8 +45,7 @@ let Router = Backbone.Router.extend({
     ReactDom.render(component, this.el);
   },
 
-<<<<<<< HEAD
-=======
+
   loginRequest(){
     let request = $.ajax({
       url: 'https://rocky-garden-9800.herokuapp.com',
@@ -90,7 +78,7 @@ let Router = Backbone.Router.extend({
     });
   },
 
->>>>>>> 158a0fe19a0327fbfd45af14834ec4bb3f7dd382
+
   home() {
     this.user.fetch().then(() => {
       this.render(<HomeView
@@ -98,7 +86,6 @@ let Router = Backbone.Router.extend({
         onLoginClick={() => this.goto('login')}
         onLogoutClick={()=> this.goto('logout')}
         onRegisterClick={() => this.goto('register')}/>
-<<<<<<< HEAD
       );
     });
   },
@@ -124,15 +111,9 @@ let Router = Backbone.Router.extend({
           });
         }}/>
     );
-  }
-
-});
-=======
-        )
-    });
   },
 
-  imageView() {
+ imageView() {
     
   },
 
@@ -143,4 +124,3 @@ let Router = Backbone.Router.extend({
 });
 
 export default Router;
->>>>>>> 158a0fe19a0327fbfd45af14834ec4bb3f7dd382
