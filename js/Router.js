@@ -1,27 +1,30 @@
+import $ from 'jquery';
+import _ from 'underscore';
+import moment from 'moment';
 import Backbone from 'backbone';
 import EditCardView from './views/editCard';
 import AddCardView from './views/addCard';
+import React from 'react';
+import ReactDom from 'react-dom';
+import {HomeView,RegView,UserView} from './views'
+
 
 let Router = Backbone.Router.extend({
   
   routes: {
     ''              : 'home',
-    'register'      : 'register'
-    'deck'          : 'userView',
-    'deck/:deckID'  : 'deckView',
-    'addDeck'       : 'addDeck',
-    'card/:cardID'  : 'imageView',
-    'addCard'       : 'addCard'
+    'register'      : 'register',
+    // 'deck'          : 'userView',
+    // 'deck/:deckID'  : 'deckView',
+    // 'addDeck'       : 'addDeck',
+    // 'card/:cardID'  : 'imageView',
+    // 'addCard'       : 'addCard'
   },
 
-  start() {
-    Backbone.history.start();
-  },
-
-    initialize(appElement) {
+  initialize(appElement) {
     this.el = appElement;
-    this.deck = new deckCollection();
-    this.card = new cardCollection();
+    // this.deck = new deckCollection();
+    // this.card = new cardCollection();
     this.user = new userCollection();
     let router = this;
   },
@@ -34,23 +37,36 @@ let Router = Backbone.Router.extend({
     ReactDom.render(component, this.el);
   },
 
-
-  logout() {
-    
+  loginRequest(){
+    let request = $.ajax({
+      url: 'https://rocky-garden-9800.herokuapp.com',
+      method: 'POST',
+      data: {
+        user: {
+          username: $('.username').val(),
+          password: $('.password').val()
+        }
+      }
+    });
   },
 
-  register() {
-    //FIXME Function below belongs on actual Register VIEW. 
-    // let request = $.ajax({
-    //   url: 'http://localhost:3000/login',
-    //   method: 'POST',
-    //   data: {
-    //     user: {
-    //       username: '',
-    //       full_name: '',
-    //       password: '',
-    //     }
-    //   }
+  // logout() {
+    
+  // },
+
+  registerRequest() {
+    let request = $.ajax({
+      url: 'peaceful-water-4820.herokuapp.com',
+      method: 'POST',
+      data: {
+        user: {
+          username: $('.username').val(),
+          password: $('.password').val(),
+          full_name: $('.fullName').val(),
+          email: $('.email').val()
+        }
+      }
+    });
   },
 
   home() {
@@ -59,24 +75,17 @@ let Router = Backbone.Router.extend({
         onHomeClick={() => this.goto('')}
         onLoginClick={() => this.goto('login')}
         onLogoutClick={()=> this.goto('logout')}
-        onRegisterClick={() => this.goto('register')}
-      );
+        onRegisterClick={() => this.goto('register')}/>
+        )
     });
   },
 
-  imageView(id) {
-    let card = this.cardCollection.get(id)
+  imageView() {
+    
+  },
 
-    if (card) {
-      this.render(
-        <EditCardView data={data}/>
-      );
-    } else {
-      card = this.cardCollection.fetch().then(() => {
-        this.render( <EditCardView data={data}/> );
-     
-      });
-    }
+  start() {
+    Backbone.history.start();
   },
 
   addCard() {
@@ -86,3 +95,5 @@ let Router = Backbone.Router.extend({
   },
 
 });
+
+export default Router;
