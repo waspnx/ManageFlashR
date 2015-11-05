@@ -36,7 +36,7 @@ let Router = Backbone.Router.extend({
     this.el = appElement;
     // this.deck = new deckCollection();
     // this.card = new cardCollection();
-    this.user = new userCollection();
+    this.user = new UserCollection();
     let router = this;
   },
 
