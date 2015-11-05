@@ -14,7 +14,7 @@ let Router = Backbone.Router.extend({
     Backbone.history.start();
   },
 
-    initialize(appElement) {
+  initialize(appElement) {
     this.el = appElement;
     this.deck = new deckCollection();
     this.card = new cardCollection();
