@@ -1,6 +1,11 @@
-import userCollection from './user-collection';
-import userModel from './user-model';
-import cardModel from './card-model';
-import cardCollection from './card-collection';
+import UserCollection from './user-collection';
+import UserModel from './user-model';
+import CardCollection from './card-collection';
+import CardModel from './card_model';
 
-export {userCollection,userModel,cardModel,cardCollection}
+export {
+  UserCollection,
+  UserModel,
+  CardCollection,
+  CardModel
+}

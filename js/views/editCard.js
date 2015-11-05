@@ -16,7 +16,7 @@ export default React.createClass({
     let newValue = e.currentTarget.value;
 
     this.setState({
-      Question: newValue;
+      Question: newValue
     })
   },
 
@@ -24,7 +24,7 @@ export default React.createClass({
     let newValue = e.currentTarget.value;
 
     this.setState({
-      Answer: newValue;
+      Answer: newValue
     })
   },
 
