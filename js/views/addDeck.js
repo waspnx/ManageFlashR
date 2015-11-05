@@ -1,7 +1,8 @@
 //this view allows you to add a deck
 
-
 import React from 'react';
+import Backbone from 'backbone';
+
 export default React.createClass({
 
 submitHandler(){
