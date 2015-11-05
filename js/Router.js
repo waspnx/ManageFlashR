@@ -1,10 +1,14 @@
+import $ from 'jquery';
+import _ from 'underscore';
+import moment from 'moment';
 import Backbone from 'backbone';
 import React from 'react';
-
-import deckViewComponent from './views/deckView';
-import HomeView from './views/home';
+import ReactDom from 'react-dom';
+import {HomeView,RegView,UserView,DeckView,AddDeckView} from './views'
+import UserCollection from './resources/user-collection' 
 
 let Router = Backbone.Router.extend({
+  
   routes: {
     ''              : 'home',
     'register'      : 'register',
@@ -18,13 +22,18 @@ let Router = Backbone.Router.extend({
 
   start() {
     Backbone.history.start();
+    // 'deck'          : 'userView',
+    // 'deck/:deckID'  : 'deckView',
+    // 'addDeck'       : 'addDeck',
+    // 'card/:cardID'  : 'imageView',
+    // 'addCard'       : 'addCard'
   },
 
-    initialize(appElement) {
+  initialize(appElement) {
     this.el = appElement;
-    this.deck = new deckCollection();
-    this.card = new cardCollection();
-    this.user = new userCollection();
+    // this.deck = new deckCollection();
+    // this.card = new cardCollection();
+    this.user = new UserCollection();
     let router = this;
   },
 
@@ -35,6 +44,40 @@ let Router = Backbone.Router.extend({
   render(component){
     ReactDom.render(component, this.el);
   },
+
+
+  loginRequest(){
+    let request = $.ajax({
+      url: 'https://rocky-garden-9800.herokuapp.com',
+      method: 'POST',
+      data: {
+        user: {
+          username: $('.username').val(),
+          password: $('.password').val()
+        }
+      }
+    });
+  },
+
+  // logout() {
+    
+  // },
+
+  registerRequest() {
+    let request = $.ajax({
+      url: 'peaceful-water-4820.herokuapp.com',
+      method: 'POST',
+      data: {
+        user: {
+          username: $('.username').val(),
+          password: $('.password').val(),
+          full_name: $('.fullName').val(),
+          email: $('.email').val()
+        }
+      }
+    });
+  },
+
 
   home() {
     this.user.fetch().then(() => {
@@ -75,4 +118,31 @@ addDeck(){
 },
  
 
+    addDeck() {  
+    this.render(
+      <addDeck
+        onBackBtnClick={() => this.goto('userView')}
+        onSubmitClick={(title) => {
+          let newDeck = new DeckCollection ({
+            Title: title,
+          });
+
+          newDeck.save().then(() => {
+            this.goto('userView');
+          });
+        }}/>
+    );
+  },
+
+ imageView() {
+    
+  },
+
+  start() {
+    Backbone.history.start();
+  },
+
+  
 });
+
+export default Router;

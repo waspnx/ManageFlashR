@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 import _ from 'underscore';
-import UserNew from './user-register'
+import UserView from './register'
+import $ from 'jquery';
 
 export default React.createClass({
 
@@ -28,17 +29,9 @@ export default React.createClass({
     this.props.onLoginClick();
   },
 
-    login() {
-    let request = $.ajax({
-      url: 'http://localhost:3000/login',
-      method: 'POST',
-      data: {
-        user: {
-          username: '',
-          password: ''
-        }
-      }
-    });
+  login(x) {
+    x.preventDefault()
+    
     $('.app').html('loading...');
     request.then((data) => {
       console.log('data:', data);
@@ -62,8 +55,9 @@ export default React.createClass({
           <form className='loginForm'>
             <input type='text' placeholder='Username' className='username field'></input>
             <input type='password' placeholder='password' className='password field'></input>
-            <input onSubmit={login()} type='submit'>Login</input>
-            <input type='button'>Register!</input>
+
+            <input onSubmit={this.login(x)} type='submit'>Login</input>
+            <input onClick={()=>this.selectRegHandler()} type='button'>Register!</input>
           </form>
         </div>
       </div>

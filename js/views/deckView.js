@@ -1,5 +1,4 @@
-// this view shows 
-// the individual flashR cards
+// this view shows rows of flashR cards
 // that comprise the deck that was clicked in UserView
 
 import React from 'react';
