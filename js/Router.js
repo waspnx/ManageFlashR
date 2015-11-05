@@ -4,7 +4,12 @@ import moment from 'moment';
 import Backbone from 'backbone';
 import React from 'react';
 import ReactDom from 'react-dom';
-import CardCollection from './resources/card_collection'
+import {
+  UserModel,
+  UserCollection,
+  CardModel,
+  CardCollection,
+} from './resources';
 import {  
   HomeView,
   RegView,
