@@ -60,5 +60,9 @@ let Router = Backbone.Router.extend({
       );
     });
   },
-x
+
+  imageView() {
+    
+  },
+
 });
