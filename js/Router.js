@@ -2,11 +2,17 @@ import $ from 'jquery';
 import _ from 'underscore';
 import moment from 'moment';
 import Backbone from 'backbone';
-import EditCardView from './views/editCard';
-import AddCardView from './views/addCard';
 import React from 'react';
 import ReactDom from 'react-dom';
-import {HomeView,RegView,UserView} from './views'
+import CardCollection from './resources/card_collection'
+import {  
+  HomeView,
+  RegView,
+  UserView,
+  NavView,
+  EditCardView,
+  AddCardView,
+} from './views';
 
 
 let Router = Backbone.Router.extend({
@@ -90,7 +96,16 @@ let Router = Backbone.Router.extend({
 
   addCard() {
     this.render(
-      <AddCardView cancelClick={this.goto('deck/:deckID')}
+      <AddCardView 
+        onCancelClick={this.goto('deck/:deckID')}
+        onAddCard={(quest, ans) => {
+          let cardAddition = new CardModel({
+            Question: quest,
+            Answer: ans
+          })
+          cardAddition.save().then(()=> this.goto('deck/:deckID'));
+        }}
+      />
     );
   },
 

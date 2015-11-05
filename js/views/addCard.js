@@ -2,22 +2,26 @@ import React from 'react';
 
 export default React.createClass({
 
+  submitHandler(e) {
+    e.preventDefault();
+    this.props.onAddCard(this.state.Answer, this.state.Question);
+  },
   // e stands for event
   // setting changed state to new state (question and answer)
   updateQuestion(e) { 
-    let newValue = e.currentTarget.value;
+    let newQuestion = e.currentTarget.value;
 
     this.setState({
-      Question: newValue;
-    })
+      Question: newQuestion
+    });
   },
 
   updateAnswer(e) { 
-    let newValue = e.currentTarget.value;
+    let newAnswer = e.currentTarget.value;
 
     this.setState({
-      Answer: newValue;
-    })
+      Answer: newAnswer
+    });
   },
 
   submitHandler(e) {
@@ -25,9 +29,6 @@ export default React.createClass({
     this.props.onSubmit(this.state.Question, this.state.Answer);
   },
 
-  submitHandler() {
-    
-  },
 
   render() {
     return (
