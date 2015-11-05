@@ -4,7 +4,8 @@ import moment from 'moment';
 import Backbone from 'backbone';
 import React from 'react';
 import ReactDom from 'react-dom';
-import {HomeView,RegView,UserView} from './views'
+import {HomeView,RegView,UserView} from './views';
+import {userCollection,userModel,cardModel,cardCollection} from './resources';
 
 
 let Router = Backbone.Router.extend({
@@ -12,17 +13,17 @@ let Router = Backbone.Router.extend({
   routes: {
     ''              : 'home',
     'register'      : 'register',
-    // 'deck'          : 'userView',
-    // 'deck/:deckID'  : 'deckView',
-    // 'addDeck'       : 'addDeck',
-    // 'card/:cardID'  : 'imageView',
-    // 'addCard'       : 'addCard'
+    'deck'          : 'userView',
+    'deck/:deckID'  : 'deckView',
+    'addDeck'       : 'addDeck',
+    'card/:cardID'  : 'imageView',
+    'addCard'       : 'addCard'
   },
 
   initialize(appElement) {
     this.el = appElement;
-    // this.deck = new deckCollection();
-    // this.card = new cardCollection();
+    this.deck = new deckCollection();
+    this.card = new cardCollection();
     this.user = new userCollection();
     let router = this;
   },
