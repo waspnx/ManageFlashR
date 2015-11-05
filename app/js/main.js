@@ -232,6 +232,10 @@ var Router = _backbone2['default'].Router.extend({
     'addCard': 'addCard'
   },
 
+  start: function start() {
+    _backbone2['default'].history.start();
+  },
+
   initialize: function initialize(appElement) {
     this.el = appElement;
     this.deck = new deckCollection();
@@ -298,6 +302,59 @@ var Router = _backbone2['default'].Router.extend({
           return _this.goto('register');
         } }));
     });
+  },
+
+  deckView: function deckView(deckID) {
+    var _this2 = this;
+
+    this.deck.fetch().then(function () {
+      _this2.render(_react2['default'].createElement('deckViewComponent', {
+        onPhotoSelect: function (id) {
+          return _this2.navigate('card/' + cardID, { trigger: true });
+        },
+        onAddCardClick: function () {
+          return _this2.goto('addCard');
+        },
+        onBackBtnClick: function () {
+          return _this2.goto('userView');
+        } }));
+    });
+  },
+
+  addDeck: function addDeck() {
+    var _this3 = this;
+
+    this.render(_react2['default'].createElement('addDeck', {
+      onBackBtnClick: function () {
+        return _this3.goto('userView');
+      },
+      onSubmitClick: function (title) {
+        letnewQuestion = document.querySelector('.enterTitle').value;
+        letnewDeck = new DeckCollection({
+          Title: title
+        });
+        newDeck.save().then(function () {
+          _this3.goto('addCard');
+        });
+      } }));
+  },
+
+  addDeck: function addDeck() {
+    var _this4 = this;
+
+    this.render(_react2['default'].createElement('addDeck', {
+      onBackBtnClick: function () {
+        return _this4.goto('userView');
+      },
+      onSubmitClick: function (title) {
+        var newDeck = new DeckCollection({
+          Title: title
+        });
+
+        newDeck.save().then(function () {
+          _this4.goto('userView');
+        });
+      } }));
   },
 
   imageView: function imageView() {},
