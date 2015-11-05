@@ -2,14 +2,6 @@ import React from 'react';
 
 export default React.createClass({
 
-  //data is placeholder for the value being passed in
-  getInitialState() {
-    return {
-      Answer: this.props.data.Answer,
-      Question: this.props.data.Question
-    };
-  },
-
   // e stands for event
   // setting changed state to new state (question and answer)
   updateQuestion(e) { 
@@ -31,6 +23,10 @@ export default React.createClass({
   submitHandler(e) {
     e.preventDefault();
     this.props.onSubmit(this.state.Question, this.state.Answer);
+  },
+
+  submitHandler() {
+    
   },
 
   render() {

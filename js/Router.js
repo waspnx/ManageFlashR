@@ -1,5 +1,6 @@
 import Backbone from 'backbone';
 import EditCardView from './views/editCard';
+import AddCardView from './views/addCard';
 
 let Router = Backbone.Router.extend({
   
@@ -76,6 +77,12 @@ let Router = Backbone.Router.extend({
      
       });
     }
+  },
+
+  addCard() {
+    this.render(
+      <AddCardView cancelClick={this.goto('deck/:deckID')}
+    );
   },
 
 });
