@@ -89,4 +89,3 @@ let Router = Backbone.Router.extend({
 });
 
 export default Router;
->>>>>>> 01e2870bfebdead6a7ef209901345bf67e137024
