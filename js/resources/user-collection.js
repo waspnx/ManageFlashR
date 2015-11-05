@@ -5,12 +5,7 @@ import {APP_URL} from '../data.js';
 let userCollection = Backbone.Collection.extend({
 
   url: APP_URL,
-
   model: userModel,
-
-  parse(data) {
-    return data.results;
-  }
 
 });
 
