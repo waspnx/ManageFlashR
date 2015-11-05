@@ -47,7 +47,11 @@ var element = document.querySelector('.app');
 
 new _router2['default'](element).start();
 
+<<<<<<< HEAD
 },{"./router":5,"backbone":13,"jquery":15,"moment":16,"react":173,"react-dom":17,"underscore":174}],3:[function(require,module,exports){
+=======
+},{"./router":8,"backbone":13,"jquery":15,"moment":16,"react":173,"react-dom":17,"underscore":174}],3:[function(require,module,exports){
+>>>>>>> master
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -62,20 +66,34 @@ var _backbone2 = _interopRequireDefault(_backbone);
 
 var _data = require('../data');
 
+<<<<<<< HEAD
 var _card_model = require('./card_model');
 
 var _card_model2 = _interopRequireDefault(_card_model);
+=======
+var _cardModel = require('./card-model');
+
+var _cardModel2 = _interopRequireDefault(_cardModel);
+>>>>>>> master
 
 exports['default'] = _backbone2['default'].Collection.extend({
 
   url: _data.APP_URL,
 
+<<<<<<< HEAD
   model: _card_model2['default']
+=======
+  model: _cardModel2['default']
+>>>>>>> master
 
 });
 module.exports = exports['default'];
 
+<<<<<<< HEAD
 },{"../data":1,"./card_model":4,"backbone":13}],4:[function(require,module,exports){
+=======
+},{"../data":1,"./card-model":4,"backbone":13}],4:[function(require,module,exports){
+>>>>>>> master
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -94,12 +112,103 @@ exports['default'] = _backbone2['default'].Model.extend({
 
   urlRoot: _data.APP_URL,
 
+<<<<<<< HEAD
   idAttribute: 'objectId'
+=======
+  idAttribute: 'id'
+>>>>>>> master
 
 });
 module.exports = exports['default'];
 
 },{"../data":1,"backbone":13}],5:[function(require,module,exports){
+<<<<<<< HEAD
+=======
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _userCollection = require('./user-collection');
+
+var _userCollection2 = _interopRequireDefault(_userCollection);
+
+var _userModel = require('./user-model');
+
+var _userModel2 = _interopRequireDefault(_userModel);
+
+var _cardModel = require('./card-model');
+
+var _cardModel2 = _interopRequireDefault(_cardModel);
+
+var _cardCollection = require('./card-collection');
+
+var _cardCollection2 = _interopRequireDefault(_cardCollection);
+
+exports.userCollection = _userCollection2['default'];
+exports.userModel = _userModel2['default'];
+exports.cardModel = _cardModel2['default'];
+exports.cardCollection = _cardCollection2['default'];
+
+},{"./card-collection":3,"./card-model":4,"./user-collection":6,"./user-model":7}],6:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _backbone = require('backbone');
+
+var _backbone2 = _interopRequireDefault(_backbone);
+
+var _userModelJs = require('./user-model.js');
+
+var _userModelJs2 = _interopRequireDefault(_userModelJs);
+
+var _dataJs = require('../data.js');
+
+var userCollection = _backbone2['default'].Collection.extend({
+
+  url: _dataJs.APP_URL,
+  model: _userModelJs2['default']
+
+});
+
+exports['default'] = userCollection;
+module.exports = exports['default'];
+
+},{"../data.js":1,"./user-model.js":7,"backbone":13}],7:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _backbone = require('backbone');
+
+var _backbone2 = _interopRequireDefault(_backbone);
+
+var _dataJs = require('../data.js');
+
+var userModel = _backbone2['default'].Model.extend({
+
+  urlRoot: _dataJs.APP_URL,
+  idAttribute: 'id'
+
+});
+
+exports['default'] = userModel;
+module.exports = exports['default'];
+
+},{"../data.js":1,"backbone":13}],8:[function(require,module,exports){
+>>>>>>> master
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -138,23 +247,29 @@ var _resourcesCard_collection2 = _interopRequireDefault(_resourcesCard_collectio
 
 var _views = require('./views');
 
+var _resources = require('./resources');
+
 var Router = _backbone2['default'].Router.extend({
 
   routes: {
     '': 'home',
-    'register': 'register'
+    'register': 'register',
+    'deck': 'userView',
+    'deck/:deckID': 'deckView',
+    'addDeck': 'addDeck',
+    'card/:cardID': 'imageView',
+    'addCard': 'addCard'
   },
 
-  // 'deck'          : 'userView',
-  // 'deck/:deckID'  : 'deckView',
-  // 'addDeck'       : 'addDeck',
-  // 'card/:cardID'  : 'imageView',
-  // 'addCard'       : 'addCard'
+  start: function start() {
+    _backbone2['default'].history.start();
+  },
+
   initialize: function initialize(appElement) {
     this.el = appElement;
-    // this.deck = new deckCollection();
-    // this.card = new cardCollection();
-    this.user = new userCollection();
+    this.deck = new deckCollection();
+    this.card = new _resources.cardCollection();
+    this.user = new _resources.userCollection();
     var router = this;
   },
 
@@ -218,6 +333,62 @@ var Router = _backbone2['default'].Router.extend({
     });
   },
 
+<<<<<<< HEAD
+=======
+  deckView: function deckView(deckID) {
+    var _this2 = this;
+
+    this.deck.fetch().then(function () {
+      _this2.render(_react2['default'].createElement('deckViewComponent', {
+        onPhotoSelect: function (id) {
+          return _this2.navigate('card/' + cardID, { trigger: true });
+        },
+        onAddCardClick: function () {
+          return _this2.goto('addCard');
+        },
+        onBackBtnClick: function () {
+          return _this2.goto('userView');
+        } }));
+    });
+  },
+
+  addDeck: function addDeck() {
+    var _this3 = this;
+
+    this.render(_react2['default'].createElement('addDeck', {
+      onBackBtnClick: function () {
+        return _this3.goto('userView');
+      },
+      onSubmitClick: function (title) {
+        letnewQuestion = document.querySelector('.enterTitle').value;
+        letnewDeck = new DeckCollection({
+          Title: title
+        });
+        newDeck.save().then(function () {
+          _this3.goto('addCard');
+        });
+      } }));
+  },
+
+  addDeck: function addDeck() {
+    var _this4 = this;
+
+    this.render(_react2['default'].createElement('addDeck', {
+      onBackBtnClick: function () {
+        return _this4.goto('userView');
+      },
+      onSubmitClick: function (title) {
+        var newDeck = new DeckCollection({
+          Title: title
+        });
+
+        newDeck.save().then(function () {
+          _this4.goto('userView');
+        });
+      } }));
+  },
+
+>>>>>>> master
   imageView: function imageView() {},
 
   start: function start() {
@@ -246,6 +417,7 @@ var Router = _backbone2['default'].Router.extend({
 exports['default'] = Router;
 module.exports = exports['default'];
 
+<<<<<<< HEAD
 },{"./resources/card_collection":3,"./views":9,"backbone":13,"jquery":15,"moment":16,"react":173,"react-dom":17,"underscore":174}],6:[function(require,module,exports){
 "use strict";
 
@@ -415,6 +587,9 @@ exports["default"] = _react2["default"].createClass({
 module.exports = exports["default"];
 
 },{"react":173}],8:[function(require,module,exports){
+=======
+},{"./resources":5,"./views":10,"backbone":13,"jquery":15,"moment":16,"react":173,"react-dom":17,"underscore":174}],9:[function(require,module,exports){
+>>>>>>> master
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -527,7 +702,11 @@ exports['default'] = _react2['default'].createClass({
 });
 module.exports = exports['default'];
 
+<<<<<<< HEAD
 },{"./register":11,"jquery":15,"react":173,"react-dom":17,"underscore":174}],9:[function(require,module,exports){
+=======
+},{"./register":11,"jquery":15,"react":173,"react-dom":17,"underscore":174}],10:[function(require,module,exports){
+>>>>>>> master
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -602,7 +781,11 @@ exports["default"] = _react2["default"].createClass({
 });
 module.exports = exports["default"];
 
+<<<<<<< HEAD
 },{"react":173}],11:[function(require,module,exports){
+=======
+},{"./home.js":9,"./register.js":11,"./userView.js":12}],11:[function(require,module,exports){
+>>>>>>> master
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
