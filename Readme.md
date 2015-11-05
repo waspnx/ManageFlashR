@@ -1,24 +1,14 @@
-## Welcome to My Project
+## Welcome to Our Project
 
-> I am your Readme.md file, you should probably update me.
+> This is the FlashR(Group 5) Front End Repo
+>The Iron Yard, Atlanta;  Week 7 Group Assignment
 
-
-## Usage
-
-- Clone this repo
-- Run `npm install` to install all necessary dependencies
-- Run `gulp start` to start the server and a handful of other tasks
-
-
-## Assets Installed By Default
-
-- [Normalize CSS](https://necolas.github.io/normalize.css/)
-- [Bourbon](http://bourbon.io/)
-- [Neat](http://neat.bourbon.io/)
-
+-Repo contains the Front End admin panel for the application. This is where users will log into and have the ability to create new flash card games and manage/delete current ones.
 
 ## Tools Used
 
+- [React](https://facebook.github.io/react/)
+- [Backbone](http://backbonejs.org/)
 - [Babel](https://babeljs.io/)
 - [Browserify](http://browserify.org/)
 - [JavaScript Code Style](http://jscs.info/)
