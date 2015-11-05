@@ -98,13 +98,13 @@ let Router = Backbone.Router.extend({
     });
   },
 
-  deckView(deckID) {
+  deckView(id) {
     this.deck.fetch().then(() => {
     this.render(
       <deckViewComponent
-      onPhotoSelect ={id => this.navigate(`card/${cardID}`,{trigger: true})}
-      onAddCardClick={() => this.goto('addCard')}
-      onBackBtnClick={() => this.goto('userView')}/>
+      onCardSelect = {() => this.goto('card/:id')}
+      onAddCardClick = {() => this.goto('addCard')}
+      onBackBtnClick = {() => this.goto('userView')}/>
     );
    });  
   },
@@ -160,8 +160,7 @@ addDeck(){
             Answer: ans
           })
           cardAddition.save().then(()=> this.goto('deck/:deckID'));
-        }}
-      />
+        }}/>
     );
   },
 
