@@ -1,11 +1,13 @@
 import UserCollection from './user-collection';
 import UserModel from './user-model';
 import CardCollection from './card-collection';
-import CardModel from './card_model';
+import CardModel from './card-model';
 
 export {
   UserCollection,
   UserModel,
   CardCollection,
-  CardModel
+  CardModel,
+  deckCollection,
+  deckModel
 }
