@@ -4,9 +4,10 @@ import moment from 'moment';
 import Backbone from 'backbone';
 import React from 'react';
 import ReactDom from 'react-dom';
-import {HomeView,RegView,UserView,DeckView,AddDeckView} from './views';
-import {userCollection,userModel,cardModel,cardCollection} from './resources';
-
+import {HomeView,RegView,UserView,AddDeckView} from './views';
+import {userCollection,userModel,cardModel,cardCollection,deckModel} from './resources';
+import deckCollection from './resources/deck-collection';
+import DeckView from './views/deckView';
 let Router = Backbone.Router.extend({
   
   routes: {
@@ -88,7 +89,7 @@ let Router = Backbone.Router.extend({
   deckView(deckID) {
     this.deck.fetch().then(() => {
     this.render(
-      <deckViewComponent
+      <DeckView
       onCardSelect ={cardID => this.navigate(`card/${cardID}`,{trigger: true})}
       onAddCardClick={() => this.goto('addCard')}
       onBackBtnClick={() => this.goto('userView')}/>
@@ -97,12 +98,13 @@ let Router = Backbone.Router.extend({
   },
 
 addDeck(){
+  console.log('hellur');
   this.render(
     <addDeck
     onBackBtnClick={() => this.goto('userView')}
     onSubmitClick={(title) =>{
-      letnewQuestion = document.querySelector('.enterTitle').value;
-      letnewDeck = new DeckCollection ({
+      let newTitle = document.querySelector('.enterTitle').value;
+      let newDeck = new deckCollection ({
         Title: title,
       })
       newDeck.save().then(() => {
@@ -113,21 +115,6 @@ addDeck(){
 },
  
 
-    addDeck() {  
-    this.render(
-      <addDeck
-        onBackBtnClick={() => this.goto('userView')}
-        onSubmitClick={(title) => {
-          let newDeck = new DeckCollection ({
-            Title: title,
-          });
-
-          newDeck.save().then(() => {
-            this.goto('userView');
-          });
-        }}/>
-    );
-  },
 
  imageView() {
     
