@@ -45,7 +45,7 @@ export default React.createClass({
           <input type="text" 
             onChange={this.updateAnswer} 
             value={this.state.Answer}/>
-          <button>Delete Card</button>
+          <button onClick={this}>Cancel</button>
           <input type="submit" onClick={this.submitHandler}>Save Card</input>
         </form>
       </div>
