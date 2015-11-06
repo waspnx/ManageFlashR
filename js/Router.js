@@ -5,6 +5,7 @@ import Backbone from 'backbone';
 import React from 'react';
 import ReactDom from 'react-dom';
 import Cookies from 'js-cookie';
+
 import {
   UserCollection,
   UserModel,
@@ -13,6 +14,7 @@ import {
   DeckCollection,
   DeckModel
 } from './resources';
+
 import {
   RegisterPage,
   UserView,
@@ -21,7 +23,6 @@ import {
   AddCardView,
   LoginPage,
 } from './views';
-
 
 let Router = Backbone.Router.extend({
   
@@ -119,7 +120,7 @@ let Router = Backbone.Router.extend({
 
   register() {
     let request = $.ajax({
-      url: `https://rocky-garden-9800.herokuapp/login`,
+      url: `https://rocky-garden-9800.herokuapp/signup`,
       method: 'POST',
       data: {
         username: $('#username').val(),

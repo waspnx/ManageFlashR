@@ -13,7 +13,7 @@ processCards(data) {
 
   return (
     <div className='cardContainer' key={data._id} 
-    onClick ={()=> onCardSelect(data._Id)}>
+      onClick ={()=> onCardSelect(data._Id)}>
       <span>Question: {data.question}</span>
       <span>Answer: {data.answer}</span>
     </div>
@@ -26,7 +26,7 @@ processCards(data) {
 
 backBtnHandler(route){
   this.props.onBackBtnClick(route);
-}
+},
 
   render() {
      <div className='deckViewContainer'>
@@ -35,11 +35,10 @@ backBtnHandler(route){
 
       <div className="btns">
         <i className="fa fa-plus" onClick={() => this.addCardHandler()}></i>
-        <button className="backBtn" onClick={() => this.backBtnHandler()}>back</i>
-      </div>          
+        <button className="backBtn" onClick={() => this.backBtnHandler()}>back</button>
+      </div>    
+
     </div>
-
-    
-
   }
+
 }); 
