@@ -146,7 +146,7 @@ exports['default'] = _backbone2['default'].Model.extend({
 
   urlRoot: _data.APP_URL,
 
-  idAttribute: 'objectId'
+  idAttribute: 'id'
 
 });
 module.exports = exports['default'];
