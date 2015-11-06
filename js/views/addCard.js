@@ -4,7 +4,7 @@ export default React.createClass({
 
   submitHandler(e) {
     e.preventDefault();
-    this.props.onAddCard(this.state.Answer, this.state.Question);
+    this.props.onSubmit(this.state.Answer, this.state.Question);
   },
   // e stands for event
   // setting changed state to new state (question and answer)
@@ -36,12 +36,10 @@ export default React.createClass({
         <form>
           <h2>Question</h2>
           <input type="textarea" 
-            onChange={this.updateQuestion} 
-            value={this.state.Question}/>
+            onChange={this.updateQuestion} />
           <h2>Answer</h2>
           <input type="text" 
-            onChange={this.updateAnswer} 
-            value={this.state.Answer}/>
+            onChange={this.updateAnswer} />
           <button onClick={this.props.cancelClick}>Cancel</button>
           <input type="submit" onClick={this.submitHandler}>Save Card</input>
         </form>

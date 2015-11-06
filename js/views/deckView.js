@@ -20,7 +20,7 @@ processCards(data) {
    )
 },
 
- addCardHandler(route){
+addCardHandler(route){
   this.props.onAddCardClick(route);
 },
 

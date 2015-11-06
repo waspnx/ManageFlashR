@@ -9,6 +9,8 @@ import {
   UserCollection,
   CardModel,
   CardCollection,
+  DeckCollection,
+  DeckModel
 } from './resources';
 import {  
   HomeView,
@@ -23,7 +25,7 @@ import {
 let Router = Backbone.Router.extend({
   
   routes: {
-    ''              : 'home',
+    ''              : 'imageView',
     'register'      : 'register',
     'deck'          : 'userView',
     'deck/:deckID'  : 'deckView',
@@ -39,8 +41,8 @@ let Router = Backbone.Router.extend({
 
   initialize(appElement) {
     this.el = appElement;
-    this.deck = new deckCollection();
-    this.card = new cardCollection();
+    this.deck = new DeckCollection();
+    this.card = new CardCollection();
     this.user = new UserCollection();
     let router = this;
   },
@@ -102,48 +104,45 @@ let Router = Backbone.Router.extend({
     this.deck.fetch().then(() => {
       this.render(
         <deckViewComponent
-        onCardSelect = {() => this.goto('card/:id')}
+        onCardSelect = {() => this.goto('card/'+ id)}
         onAddCardClick = {() => this.goto('addCard')}
         onBackBtnClick = {() => this.goto('userView')}/>
       );
    });  
   },
 
-addDeck(){
-  this.render(
-    <addDeck
-    onBackBtnClick={() => this.goto('userView')}
-    onSubmitClick={(title) =>{
-      letnewQuestion = document.querySelector('.enterTitle').value;
-      letnewDeck = new DeckCollection ({
-        Title: title,
-      })
-      newDeck.save().then(() => {
-        this.goto('addCard')})
-      }
-    }/>
-  )
-},
- 
-
-    addDeck() {  
+  addDeck(){
     this.render(
       <addDeck
-        onBackBtnClick={() => this.goto('userView')}
-        onSubmitClick={(title) => {
-          let newDeck = new DeckCollection ({
-            Title: title,
-          });
-
-          newDeck.save().then(() => {
-            this.goto('userView');
-          });
-        }}/>
-    );
+      onBackBtnClick={() => this.goto('userView')}
+      onSubmitClick={(title) =>{
+        letnewQuestion = document.querySelector('.enterTitle').value;
+        letnewDeck = new DeckCollection ({
+          Title: title,
+        })
+        newDeck.save().then(() => {
+          this.goto('addCard')})
+        }
+      }/>
+    )
+  },
+ 
+  saveEdit(quest, ans, cardId) {
+    this.card.get(cardId).save({
+      Question: quest,
+      Answer: ans
+    }).then(() => this.goto('deck/'+ deckId));
   },
 
- imageView() {
-    
+  imageView(cardId) {
+    let card = this.card.get(cardId);
+
+    this.render(
+      <EditCardView 
+        data={card}
+        onSubmitClick={ (quest, ans) => this.saveEdit(quest, ans, cardId) }
+      />
+    );
   },
 
   start() {
@@ -151,15 +150,16 @@ addDeck(){
   },
 
   addCard() {
+
     this.render(
       <AddCardView 
-        onCancelClick={this.goto('deck/:deckID')}
-        onAddCard={(quest, ans) => {
+       // onCancelClick={this.goto('deck')}
+        onSubmit={(quest, ans) => {
           let cardAddition = new CardModel({
             Question: quest,
             Answer: ans
           })
-          cardAddition.save().then(()=> this.goto('deck/:deckID'));
+         cardAddition.save().then(()=> this.goto('deck/'));
         }}/>
     );
   },
