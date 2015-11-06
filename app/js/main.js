@@ -292,11 +292,11 @@ var Router = _backbone2['default'].Router.extend({
     'isLogged': 'isLogged',
     'registerPage': 'RegisterPage',
     'register': 'register',
-    'deck': 'userView',
+    'dashboard': 'userView',
+    'deck/addDeck': 'addDeck',
     'deck/:deckID': 'deckView',
-    'addDeck': 'addDeck',
-    'card/:cardID': 'cardView',
-    'addCard': 'addCard'
+    'deck/:deckID/cards/:cardID': 'cardView',
+    'deck/:deckID/addCard': 'addCard'
   },
 
   start: function start() {
@@ -461,7 +461,7 @@ var Router = _backbone2['default'].Router.extend({
     });
   },
 
-  imageView: function imageView(cardId) {
+  cardView: function cardView(cardId) {
     var _this8 = this;
 
     var card = this.card.get(cardId);
@@ -477,9 +477,9 @@ var Router = _backbone2['default'].Router.extend({
   addCard: function addCard() {
     var _this9 = this;
 
-    this.render(_react2['default'].createElement(_views.AddCardView,
-    // onCancelClick={this.goto('deck')}
-    { onSubmit: function (quest, ans) {
+    this.render(_react2['default'].createElement(_views.AddCardView, {
+      onCancelClick: this.goto(),
+      onSubmit: function (quest, ans) {
         var cardAddition = new _resources.CardModel({
           Question: quest,
           Answer: ans
@@ -564,11 +564,7 @@ exports["default"] = _react2["default"].createClass({
           { onClick: this.props.cancelClick },
           "Cancel"
         ),
-        _react2["default"].createElement(
-          "input",
-          { type: "submit", onClick: this.submitHandler },
-          "Save Card"
-        )
+        _react2["default"].createElement("input", { type: "submit", value: "Save Card", onClick: this.submitHandler })
       )
     );
   }

@@ -29,17 +29,17 @@ let Router = Backbone.Router.extend({
   
   routes: {
 
-    ''              : 'home',
-    'loginPage'     : 'LoginPage',
-    'login'         : 'login',
-    'isLogged'      : 'isLogged',
-    'registerPage'  : 'RegisterPage',
-    'register'      : 'register',
-    'deck'          : 'userView',
-    'deck/:deckID'  : 'deckView',
-    'addDeck'       : 'addDeck',
-    'card/:cardID'  : 'cardView',
-    'addCard'       : 'addCard'
+    ''                            : 'home',
+    'loginPage'                   : 'LoginPage',
+    'login'                       : 'login',
+    'isLogged'                    : 'isLogged',
+    'registerPage'                : 'RegisterPage',
+    'register'                    : 'register',
+    'dashboard'                   : 'userView',
+    'deck/addDeck'                : 'addDeck',
+    'deck/:deckID'                : 'deckView',
+    'deck/:deckID/cards/:cardID'  : 'cardView',
+    'deck/:deckID/addCard'        : 'addCard'
   },
 
 
@@ -186,7 +186,7 @@ let Router = Backbone.Router.extend({
     }).then(() => this.goto('deck/'+ deckId));
   },
 
-  imageView(cardId) {
+  cardView(cardId) {
     let card = this.card.get(cardId);
 
     this.render(
@@ -201,7 +201,7 @@ let Router = Backbone.Router.extend({
 
     this.render(
       <AddCardView 
-       // onCancelClick={this.goto('deck')}
+        onCancelClick={this.goto()}
         onSubmit={(quest, ans) => {
           let cardAddition = new CardModel({
             Question: quest,

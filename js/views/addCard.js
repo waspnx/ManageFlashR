@@ -41,7 +41,7 @@ export default React.createClass({
           <input type="text" 
             onChange={this.updateAnswer} />
           <button onClick={this.props.cancelClick}>Cancel</button>
-          <input type="submit" onClick={this.submitHandler}>Save Card</input>
+          <input type="submit" value="Save Card" onClick={this.submitHandler}></input>
         </form>
       </div>
     );
