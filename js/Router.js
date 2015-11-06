@@ -29,10 +29,10 @@ let Router = Backbone.Router.extend({
   
   routes: {
     ''              : 'home',
-    'loginPage'     : 'LoginPage',
+    'loginPage'     : 'loginPage',
     'login'         : 'login',
     'isLogged'      : 'isLogged',
-    'registerPage'  : 'RegisterPage',
+    'registerPage'  : 'registerPage',
     'register'      : 'register',
     'deck'          : 'userView',
     'deck/:deckID'  : 'deckView',
@@ -69,41 +69,45 @@ let Router = Backbone.Router.extend({
     ReactDom.render(
       <LoginPage
         user={Cookies.getJSON('user')}
-        onLoginClick={() => this.navigate('login', {trigger: true})}
+        onLoginClick={(user,pass)=>this.login(user,pass)}
         // onLogoutClick={() => this.navigate('logout', {trigger: true})}
         onRegisterClick={() => this.navigate('registerPage', {trigger: true})}/>,
-      document.querySelector('.app')
+        document.querySelector('.app')
     );
   },
 
-  login() {
+  login(user,pass) {
     let request = $.ajax({
-      url: `https://rocky-garden-9800.herokuapp.com/signup`,
+      url: `https://rocky-garden-9800.herokuapp.com/login`,
       method: 'POST',
       data: {
-        username: $('#username').val(),
-        password: $('#password').val(),
+        username: user,
+        password: pass,
       }
     });
     $('.app').html('loading...');
     request.then((data) => {
-      console.log('data:', data);
       Cookies.set('user', data);
       $.ajaxSetup({
         headers: {
-          auth_token: data.access_token
+          'Access-Token': data.user.auth_token,
         }
       });
-      this.goto('userPage');
+      this.goto('deck');
     }).fail(() => {
       $('.app').html('Try again');
-      alert('Sorry, your login was rejected.  Please try again, or Register as a New User.');
+      this.goto('loginPage');
     });
   },
 
   isLogged() {
-    console.log('PLASE');
     if (Cookies.get('user')) {
+      let cookie = JSON.parse(Cookies.get('user'));
+      $.ajaxSetup({
+        headers: {
+         'Access-Token': cookie.user.auth_token
+        }
+      })
       this.goto('deck');
     } else {
       this.goto('loginPage');
@@ -119,9 +123,11 @@ let Router = Backbone.Router.extend({
     );
   },
 
-  register() {
+  register(user,name,email,pass) {
+    console.log($('#use').val())
+
     let request = $.ajax({
-      url: `https://rocky-garden-9800.herokuapp/signup`,
+      url: `https://rocky-garden-9800.herokuapp.com/signup`,
       method: 'POST',
       data: {
         username: $('#username').val(),
@@ -132,7 +138,6 @@ let Router = Backbone.Router.extend({
     });
     $('.app').html('loading...');
     request.then((data) => {
-      console.log('data:', data);
       Cookies.set('user', data);
       $.ajaxSetup({
         headers: {
@@ -142,6 +147,7 @@ let Router = Backbone.Router.extend({
       this.goto('deck');
     }).fail(() => {
       $('.app').html('Submit again');
+      this.goto('registerPage');
     });
   },
 
@@ -151,8 +157,19 @@ let Router = Backbone.Router.extend({
 
   },
 
+
+
+  deck() {
+    this.deck.fetch().then(()=> {
+      this.render(
+        <UserView
+        onDeckSelect={(id)=> this.goto('deck/'+id)}/>
+      );
+    });
+  },
+
   deckView(id) {
-    this.deck.fetch().then(() => {
+    this.card.fetch().then(() => {
       this.render(
         <deckViewComponent
         onCardSelect = {() => this.goto('card/:id')}
