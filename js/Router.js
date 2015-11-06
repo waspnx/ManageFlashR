@@ -6,6 +6,8 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import DeckView from './views/deckView';
 import DeckCollection from './resources/deck-collection';
+import DeckModel from './resources/deck-model';
+import AddDeckView from './views/addDeck';
 
 import {
   UserModel,
@@ -57,6 +59,7 @@ let Router = Backbone.Router.extend({
   },
 
 
+
   loginRequest(){
     let request = $.ajax({
       url: 'https://rocky-garden-9800.herokuapp.com',
@@ -91,6 +94,7 @@ let Router = Backbone.Router.extend({
 
 
   home() {
+ 
     this.user.fetch().then(() => {
       this.render(<HomeView
         onHomeClick={() => this.goto('')}
@@ -113,19 +117,18 @@ let Router = Backbone.Router.extend({
   },
 
 addDeck(){
-  console.log('hellur');
   this.render(
-    <addDeck
+    <AddDeckView
     onBackBtnClick={() => this.goto('userView')}
     onSubmitClick={(title) =>{
       let newTitle = document.querySelector('.enterTitle').value;
-      let newDeck = new deckCollection ({
+      let newDeck = new DeckModel ({
         Title: title,
       })
       newDeck.save().then(() => {
         this.goto('addCard')})
       }}/>
-  );
+   );
 },
 
  imageView() {
@@ -147,9 +150,8 @@ addDeck(){
           })
           cardAddition.save().then(()=> this.goto('deck/:deckID'));
         }}/>
-    );
-  },
-
+     );
+   },
 });
 
 export default Router;
