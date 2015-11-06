@@ -285,18 +285,17 @@ var _views = require('./views');
 var Router = _backbone2['default'].Router.extend({
 
   routes: {
-
     '': 'home',
     'loginPage': 'LoginPage',
     'login': 'login',
     'isLogged': 'isLogged',
     'registerPage': 'RegisterPage',
     'register': 'register',
-    'dashboard': 'userView',
-    'deck/addDeck': 'addDeck',
+    'deck': 'userView',
     'deck/:deckID': 'deckView',
-    'deck/:deckID/cards/:cardID': 'cardView',
-    'deck/:deckID/addCard': 'addCard'
+    'addDeck': 'addDeck',
+    'card/:cardID': 'cardView',
+    'addCard': 'addCard'
   },
 
   start: function start() {

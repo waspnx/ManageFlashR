@@ -28,20 +28,18 @@ import {
 let Router = Backbone.Router.extend({
   
   routes: {
-
-    ''                            : 'home',
-    'loginPage'                   : 'LoginPage',
-    'login'                       : 'login',
-    'isLogged'                    : 'isLogged',
-    'registerPage'                : 'RegisterPage',
-    'register'                    : 'register',
-    'dashboard'                   : 'userView',
-    'deck/addDeck'                : 'addDeck',
-    'deck/:deckID'                : 'deckView',
-    'deck/:deckID/cards/:cardID'  : 'cardView',
-    'deck/:deckID/addCard'        : 'addCard'
+    ''              : 'home',
+    'loginPage'     : 'LoginPage',
+    'login'         : 'login',
+    'isLogged'      : 'isLogged',
+    'registerPage'  : 'RegisterPage',
+    'register'      : 'register',
+    'deck'          : 'userView',
+    'deck/:deckID'  : 'deckView',
+    'addDeck'       : 'addDeck',
+    'card/:cardID'  : 'cardView',
+    'addCard'       : 'addCard'
   },
-
 
   start() {
     Backbone.history.start();
