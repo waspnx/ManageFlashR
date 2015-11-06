@@ -10,7 +10,7 @@ export default React.createClass({
       let user = this.props.user;
       if (user) {
         let name = user.username;
-        let msg = `Welcome ${name}`;
+        let msg = `Welcome user.username}`;
         return (
           <span>{msg}</span>
         );
@@ -21,31 +21,12 @@ export default React.createClass({
       }
   },
 
-  addUserHandler(user,pass){
-    this.props.onRegisterClick(user,pass);
+  selectRegHandler(){
+    this.props.onRegisterClick();
   },
 
-  addLoginHandler(user,pass){
+  addLoginHandler(){
     this.props.onLoginClick();
-  },
-
-  login(x) {
-    x.preventDefault()
-    
-    $('.app').html('loading...');
-    request.then((data) => {
-      console.log('data:', data);
-      Cookies.set('user', data);
-      $.ajaxSetup({
-        headers: {
-          auth_token: data.access_token
-        }
-      });
-      this.redirect('deck');
-    }).fail(() => {
-      this.goto('');
-      alert('Sorry, your login was rejected.  Please try again, or Register as a New User.')
-    });
   },
 
   render(){
@@ -56,11 +37,12 @@ export default React.createClass({
             <input type='text' placeholder='Username' className='username field'></input>
             <input type='password' placeholder='password' className='password field'></input>
 
-            <input onSubmit={this.login(x)} type='submit'>Login</input>
+            <input onSubmit={this.login(user)} type='submit'>Login</input>
             <input onClick={()=>this.selectRegHandler()} type='button'>Register!</input>
           </form>
         </div>
       </div>
     );
   }
+  
 });
