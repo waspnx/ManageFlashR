@@ -402,7 +402,7 @@ var Router = _backbone2['default'].Router.extend({
   registerPage: function registerPage() {
     var _this3 = this;
 
-    setHeaders();
+    this.setHeaders();
 
     _reactDom2['default'].render(_react2['default'].createElement(_views.RegisterPage, {
       user: _jsCookie2['default'].getJSON('user'),
@@ -411,10 +411,10 @@ var Router = _backbone2['default'].Router.extend({
       } }), document.querySelector('.app'));
   },
 
-  register: function register(user, name, email, pass) {
+  register: function register() {
     var _this4 = this;
 
-    setHeaders();
+    this.setHeaders();
 
     var request = _jquery2['default'].ajax({
       url: 'https://rocky-garden-9800.herokuapp.com/signup',

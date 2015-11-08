@@ -150,7 +150,7 @@ let Router = Backbone.Router.extend({
     );
   },
 
-  register(user,name,email,pass) {
+  register() {
     this.setHeaders();
 
     let request = $.ajax({
