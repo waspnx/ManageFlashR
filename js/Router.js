@@ -195,11 +195,11 @@ let Router = Backbone.Router.extend({
     );
   },
 
-  addCard() {
+  addCard(deckId) {
 
     this.render(
       <AddCardView 
-        onCancelClick={this.goto()}
+        onCancelClick={()=> this.goto('deck/'+ deckId)}
         onSubmit={(quest, ans) => {
           let cardAddition = new CardModel({
             Question: quest,

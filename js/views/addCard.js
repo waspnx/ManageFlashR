@@ -24,11 +24,10 @@ export default React.createClass({
     });
   },
 
-  submitHandler(e) {
+  cancelHandler(e) {
     e.preventDefault();
-    this.props.onSubmit(this.state.Question, this.state.Answer);
+    this.props.onCancelClick();
   },
-
 
   render() {
     return (
@@ -40,7 +39,7 @@ export default React.createClass({
           <h2>Answer</h2>
           <input type="text" 
             onChange={this.updateAnswer} />
-          <button onClick={this.props.cancelClick}>Cancel</button>
+          <button onClick={this.cancelHandler}>Cancel</button>
           <input type="submit" value="Save Card" onClick={this.submitHandler}></input>
         </form>
       </div>

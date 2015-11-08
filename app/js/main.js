@@ -473,11 +473,13 @@ var Router = _backbone2['default'].Router.extend({
     }));
   },
 
-  addCard: function addCard() {
+  addCard: function addCard(deckId) {
     var _this9 = this;
 
     this.render(_react2['default'].createElement(_views.AddCardView, {
-      onCancelClick: this.goto(),
+      onCancelClick: function () {
+        return _this9.goto('deck/' + deckId);
+      },
       onSubmit: function (quest, ans) {
         var cardAddition = new _resources.CardModel({
           Question: quest,
@@ -532,9 +534,9 @@ exports["default"] = _react2["default"].createClass({
     });
   },
 
-  submitHandler: function submitHandler(e) {
+  cancelHandler: function cancelHandler(e) {
     e.preventDefault();
-    this.props.onSubmit(this.state.Question, this.state.Answer);
+    this.props.onCancelClick();
   },
 
   render: function render() {
@@ -560,7 +562,7 @@ exports["default"] = _react2["default"].createClass({
           onChange: this.updateAnswer }),
         _react2["default"].createElement(
           "button",
-          { onClick: this.props.cancelClick },
+          { onClick: this.cancelHandler },
           "Cancel"
         ),
         _react2["default"].createElement("input", { type: "submit", value: "Save Card", onClick: this.submitHandler })
