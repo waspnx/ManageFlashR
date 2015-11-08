@@ -346,6 +346,7 @@ var Router = _backbone2['default'].Router.extend({
         password: (0, _jquery2['default'])('#password').val()
       }
     });
+
     (0, _jquery2['default'])('.app').html('loading...');
     request.then(function (data) {
       console.log('data:', data);
@@ -355,6 +356,7 @@ var Router = _backbone2['default'].Router.extend({
           auth_token: data.access_token
         }
       });
+
       _this2.goto('userPage');
     }).fail(function () {
       (0, _jquery2['default'])('.app').html('Try again');

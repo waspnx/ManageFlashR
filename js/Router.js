@@ -87,6 +87,7 @@ let Router = Backbone.Router.extend({
         password: $('#password').val(),
       }
     });
+
     $('.app').html('loading...');
     request.then((data) => {
       console.log('data:', data);
@@ -96,6 +97,7 @@ let Router = Backbone.Router.extend({
           auth_token: data.access_token
         }
       });
+
       this.goto('userPage');
     }).fail(() => {
       $('.app').html('Try again');
@@ -189,7 +191,7 @@ let Router = Backbone.Router.extend({
         onSubmitClick={(title) =>{
           let newDeck = new DeckModel ({
             Title: title,
-          })
+         })
         newDeck.save().then(() => {
           this.goto('addCard')})
         }
