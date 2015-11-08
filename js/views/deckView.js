@@ -12,8 +12,8 @@ processCards(data) {
   let onCardSelect= this.props.onCardSelect;
 
   return (
-    <div className='cardContainer' key={data._id} 
-      onClick ={()=> onCardSelect(data._Id)}>
+    <div className='cardContainer' key={data.id} 
+      onClick ={()=> onCardSelect(data.id)}>
       <span>Question: {data.question}</span>
       <span>Answer: {data.answer}</span>
     </div>
@@ -29,6 +29,7 @@ backBtnHandler(route){
 },
 
   render() {
+    return(
      <div className='deckViewContainer'>
 
         {this.props.cards().map(this.processCards)}
@@ -39,6 +40,7 @@ backBtnHandler(route){
       </div>    
 
     </div>
+    )
   }
-
+  
 }); 
