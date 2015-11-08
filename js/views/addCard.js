@@ -2,10 +2,12 @@ import React from 'react';
 
 export default React.createClass({
 
+
   submitHandler(e) {
     e.preventDefault();
-    this.props.onAddCard(this.state.Answer, this.state.Question);
+    this.props.onSubmit(this.state.Answer, this.state.Question);
   },
+
   // e stands for event
   // setting changed state to new state (question and answer)
   updateQuestion(e) { 
@@ -24,11 +26,10 @@ export default React.createClass({
     });
   },
 
-  submitHandler(e) {
+  cancelHandler(e) {
     e.preventDefault();
-    this.props.onSubmit(this.state.Question, this.state.Answer);
+    this.props.onCancelClick();
   },
-
 
   render() {
     return (
@@ -36,14 +37,12 @@ export default React.createClass({
         <form>
           <h2>Question</h2>
           <input type="textarea" 
-            onChange={this.updateQuestion} 
-            value={this.state.Question}/>
+            onChange={this.updateQuestion} />
           <h2>Answer</h2>
           <input type="text" 
-            onChange={this.updateAnswer} 
-            value={this.state.Answer}/>
-          <button onClick={this.props.cancelClick}>Cancel</button>
-          <input type="submit" onClick={this.submitHandler}>Save Card</input>
+            onChange={this.updateAnswer} />
+          <button onClick={this.cancelHandler}>Cancel</button>
+          <input type="submit" value="Save Card" onClick={this.submitHandler}></input>
         </form>
       </div>
     );

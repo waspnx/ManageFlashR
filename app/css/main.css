@@ -2025,6 +2025,47 @@ html {
   content: ""; }
 
 body {
-  background: #e2ebf3; }
+  background: #5E7686; }
+
+.wrapper {
+  width: 100%; }
+
+.login {
+  background-image: url("../images/flash-bg.png");
+  background-position: center;
+  background-size: contain;
+  margin: 0 auto;
+  height: 766px;
+  max-width: 500px;
+  position: relative; }
+  .login .field {
+    position: absolute;
+    left: 25%; }
+  .login .username {
+    bottom: 200px;
+    border-radius: 5px;
+    line-height: 2em;
+    width: 50%; }
+  .login .password {
+    bottom: 135px;
+    border-radius: 5px;
+    line-height: 2em;
+    width: 50%; }
+  .login .button {
+    position: absolute;
+    bottom: 90px;
+    border-radius: 5px;
+    width: 20%; }
+  .login .logBtn {
+    left: 25%; }
+  .login .regBtn {
+    left: 55%; }
+
+.deckThumb {
+  border: 2px solid;
+  border-radius: 5px;
+  margin-left: 5px 2% 5px 2%;
+  width: 15%;
+  height: 50px; }
 
 /*# sourceMappingURL=main.css.map */
