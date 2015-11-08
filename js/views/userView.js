@@ -20,8 +20,9 @@ export default React.createClass({
   render(){
     return(
       <div className='deckwrapper'>
-        <div className='deckThumbList'>{this.props.decks.map(this.processData)} 
-        </div>
+        <div className='deckThumbList'>
+        {this.props.decks.map(this.processData)} 
+       </div>
         <button onClick={()=>this.addDeckHandler()} className='addDeck'>Add a Deck</button>
       </div>
     );

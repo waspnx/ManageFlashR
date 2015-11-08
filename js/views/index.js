@@ -4,9 +4,10 @@ import EditCardView from './editCard';
 import AddCardView from './addCard';
 import NavView from './nav';
 import LoginPage from './login';
-
+import AddDeckView from './addDeck';
 
 export {
+  AddDeckView,
   RegisterPage,
   UserView,
   NavView,
