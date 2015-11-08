@@ -30,21 +30,22 @@ import {
 let Router = Backbone.Router.extend({
   
   routes: {
-    ''              : 'home',
-    'loginPage'     : 'loginPage',
-    'login'         : 'login',
-    'isLogged'      : 'isLogged',
-    'registerPage'  : 'registerPage',
-    'register'      : 'register',
-    'decks'         : 'dash',
-    'decks/:deckID' : 'deckView',
-    'addDeck'       : 'addDeck',
-    'card/:cardID'  : 'cardView',
-    'addCard'       : 'addCard'
+    ''                            : 'home',
+    'loginPage'                   : 'loginPage',
+    'login'                       : 'login',
+    'isLogged'                    : 'isLogged',
+    'registerPage'                : 'registerPage',
+    'register'                    : 'register',
+    'decks'                       : 'dash',
+    'decks/:deckID'               : 'deckView',
+    'addDeck'                     : 'addDeck',
+    'decks/:deckID/cards/:cardID' : 'cardView',
+    'decks/:deckID/addCard'       : 'addCard'
   },
 
   start() {
     Backbone.history.start();
+    return this;
   },
 
   initialize(appElement) {
@@ -101,15 +102,27 @@ let Router = Backbone.Router.extend({
     });
   },
 
-  ReqAuth() {
-    Cookies.get('user').then(()=>{
-      let cookie = JSON.parse(Cookies.get('user'));
+  setHeaders() {
+    let cookie = JSON.parse(Cookies.get('user'));
       $.ajaxSetup({
         headers: {
          'Access-Token': cookie.user.auth_token
-        }
-      });
-    });
+      }
+    })
+
+    // let user = Cookies.get('user');
+    // // console.log(user);
+    // if (user) {
+    //   let auth = JSON.parse(user).user.access_token;
+    //   // console.log(auth);
+    //   $.ajaxSetup({
+    //     headers: {
+    //       'Access-Token': auth
+    //     }
+    //   });
+    // } else {
+    //   this.goto('');
+    // }
   },
 
   isLogged() {
@@ -190,17 +203,20 @@ let Router = Backbone.Router.extend({
   },
 
   addDeck() {
+    this.setHeaders();
+
     let cookie = JSON.parse(Cookies.get('user'));
-    $.ajaxSetup({
-      headers: {
-       'Access-Token': cookie.user.auth_token
+      $.ajaxSetup({
+        headers: {
+         'Access-Token': cookie.user.auth_token
       }
-    });
+    })
 
     this.render(
       <AddDeckView
         onBackBtnClick={() => this.goto('decks')}
         onSubmitClick={(title) =>{
+          this.setHeaders();
           let newDeck = new DeckModel ({
             title: title,
           })
@@ -211,23 +227,25 @@ let Router = Backbone.Router.extend({
   },
 
   deckView(id) {
+    this.setHeaders();
     
     let baseUrl = 'https://rocky-garden-9800.herokuapp.com/decks/';
     let thisId = `${id}`;
-    let endofurl = '/cards';
     // console.log(`${baseUrl}${id}/cards`);
 
-    let request = $.ajax({
-      url: `${baseUrl}${id}/cards`,
-      method:'GET',
-    });
+// THIS IS UNNECESSARY - USE FETCH()
+    // let request = $.ajax({
+    //   url: `${baseUrl}${id}/cards`,
+    //   method:'GET',
+    // });
+//---------------------------------
 
-    request.then((data) => {
+    this.card.fetch({url: baseUrl+thisId+'/cards'}).then((data) => {
       this.render(
         <DeckView
         data={data}
-        onCardSelect = {() => this.goto('card/:id')}
-        onAddCardClick = {() => this.goto('addCard')}
+        onCardSelect = {(cardId) => this.goto('decks/'+thisId+'/cards/'+cardId)}
+        onAddCardClick = {() => this.goto('decks/'+thisId+'/addCard')}
         onBackBtnClick = {() => this.goto('decks')}/>
       );
     });  
@@ -241,27 +259,46 @@ let Router = Backbone.Router.extend({
   },
 
   cardView(cardId) {
-    let card = this.card.get(cardId);
+    this.setHeaders();
+    console.log('hi');
 
-    this.render(
+    let baseUrl = 'https://rocky-garden-9800.herokuapp.com/decks/';
+    let thisId = `${cardId}`;
+
+    this.card.fetch({url: baseUrl+thisId+'/cards'}).then((data) => {this.render(
       <EditCardView 
-        data={card}
-        onSubmitClick={ (quest, ans) => this.saveEdit(quest, ans, cardId) }
-      />
-    );
+        data={data.cards}
+        onSubmitClick={ (quest, ans) => this.saveEdit(quest, ans, cardId) }/>
+      );
+    });
   },
 
   addCard(deckId) {
+    let cookie = JSON.parse(Cookies.get('user'));
+      $.ajaxSetup({
+        headers: {
+         'Access-Token': cookie.user.auth_token
+      }
+    })
+
+    let baseUrl = 'https://rocky-garden-9800.herokuapp.com/decks/'; 
+    let thisId = `${deckId}`;
+    // let endofurl = '/cards';
+
 
     this.render(
       <AddCardView 
-        onCancelClick={()=> this.goto('deck/'+ deckId)}
+        onCancelClick={()=> this.goto('decks/'+ deckId)}
         onSubmit={(quest, ans) => {
-          let cardAddition = new CardModel({
+          this.setHeaders();
+          // let cardAddition = new CardModel({
+            
+          // })
+          this.card.create({
             question: quest,
             answer: ans
-          })
-          cardAddition.save().then(()=> this.goto('decks/:deckID'));
+          },{url: baseUrl + thisId + '/cards'})
+          this.goto('decks/'+thisId)
         }}/>
      );
    },

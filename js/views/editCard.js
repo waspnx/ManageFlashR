@@ -4,9 +4,10 @@ export default React.createClass({
 
   //data is placeholder for the value being passed in
   getInitialState() {
+    console.log(this.props.data)
     return {
-      Answer: this.props.data.Answer,
-      Question: this.props.data.Question
+      answer: this.props.data.answer,
+      question: this.props.data.question
     };
   },
 
@@ -30,7 +31,7 @@ export default React.createClass({
 
   submitHandler(e) {
     e.preventDefault();
-    this.props.onSubmitClick(this.state.Question, this.state.Answer);
+    this.props.onSubmitClick(this.state.question, this.state.answer);
   },
 
   render() {
@@ -38,15 +39,15 @@ export default React.createClass({
       <div>
         <form>
           <h2>Question</h2>
-          <input type="textarea" 
+          <input type="text" 
             onChange={this.updateQuestion} 
-            value={this.state.Question}/>
+            value={this.state.question}/>
           <h2>Answer</h2>
           <input type="text" 
             onChange={this.updateAnswer} 
-            value={this.state.Answer}/>
+            placeholder={this.state.answer}/>
           <button>Delete Card</button>
-          <input type="submit" onClick={this.submitHandler}>Save Card</input>
+          <input type="submit" onClick={this.submitHandler} value='Save Card'></input>
         </form>
       </div>
     );

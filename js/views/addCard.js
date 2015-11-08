@@ -5,7 +5,7 @@ export default React.createClass({
 
   submitHandler(e) {
     e.preventDefault();
-    this.props.onSubmit(this.state.Answer, this.state.Question);
+    this.props.onSubmit(this.state.Question, this.state.Answer);
   },
 
   // e stands for event

@@ -7,8 +7,8 @@ import _ from 'underscore';
 
 export default React.createClass({
 
-  addCardHandler(route){
-    this.props.onAddCardClick(route);
+  addCardHandler(){
+    this.props.onAddCardClick();
   },
 
   backBtnHandler(route){
