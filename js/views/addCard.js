@@ -2,10 +2,12 @@ import React from 'react';
 
 export default React.createClass({
 
+
   submitHandler(e) {
     e.preventDefault();
     this.props.onSubmit(this.state.Answer, this.state.Question);
   },
+
   // e stands for event
   // setting changed state to new state (question and answer)
   updateQuestion(e) { 

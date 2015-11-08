@@ -1,46 +1,42 @@
+import React from 'react';
+import Backbone from 'backbone';
+import _ from 'underscore';
+
 // this view shows rows of flashR cards
 // that comprise the deck that was clicked in UserView
 
-import React from 'react';
-import Backbone from 'backbone';
-
-
 export default React.createClass({
 
-processCards(data) {
+  addCardHandler(route){
+    this.props.onAddCardClick(route);
+  },
 
-  let onCardSelect= this.props.onCardSelect;
+  backBtnHandler(route){
+    this.props.onBackBtnClick(route);
+  },
 
-  return (
-    <div className='cardContainer' key={data.id} 
-      onClick ={()=> onCardSelect(data.id)}>
-      <span>Question: {data.question}</span>
-      <span>Answer: {data.answer}</span>
-    </div>
-   )
-},
+  processCards(card) {
+    let onCardSelect= this.props.onCardSelect;
+    return (
+      <div className='cardContainer' key={card.id} 
+        onClick ={()=> onCardSelect(card.id)}>
+        <span>Question: {card.question}</span>
+        <span>Answer: {card.answer}</span>
+      </div>
+     )
+  },
 
-addCardHandler(route){
-  this.props.onAddCardClick(route);
-},
-
-backBtnHandler(route){
-  this.props.onBackBtnClick(route);
-},
 
   render() {
     return(
-     <div className='deckViewContainer'>
+      <div className='deckViewContainer'>
+          <div className='data'>{this.props.data.cards.map(this.processCards)}</div>
+        <div className="btns">
+          <i className="fa fa-plus" onClick={this.addCardHandler}></i>
+          <button className="backBtn" onClick={this.backBtnHandler}>back</button>
+        </div>    
+      </div>
+    );
+  },
 
-        {this.props.cards().map(this.processCards)}
-
-      <div className="btns">
-        <i className="fa fa-plus" onClick={() => this.addCardHandler()}></i>
-        <button className="backBtn" onClick={() => this.backBtnHandler()}>back</button>
-      </div>    
-
-    </div>
-    )
-  }
-  
-}); 
+});
