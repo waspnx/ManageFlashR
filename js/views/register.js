@@ -10,6 +10,14 @@ export default React.createClass({
     this.props.onLoginClick(this.state.username, this.state.password);
   },
 
+  updateUsername(x) { 
+    let newUsername = x.currentTarget.value;
+
+    this.setState({
+      username: newUsername
+    });
+  },
+
   updatePassword(x) { 
     let newPassword = x.currentTarget.value;
 
@@ -18,36 +26,25 @@ export default React.createClass({
     });
   },
 
-  updateUsername(x) { 
-    let newUsername = x.currentTarget.value;
+  updateFullname(x) { 
+    let newFullname = x.currentTarget.value;
 
     this.setState({
-      username: newUsername
+      fullname: newFullname
     });
   },
 
-  updateUsername(x) { 
-    let newUsername = x.currentTarget.value;
+  updateEmail(x) { 
+    let newEmail = x.currentTarget.value;
 
     this.setState({
-      username: newUsername
-    });
-  },
-
-  updateUsername(x) { 
-    let newUsername = x.currentTarget.value;
-
-    this.setState({
-      username: newUsername
+      email: newEmail
     });
   },
   
-  registerBtn() {
-    return (
-      <button id='registerUser' onClick={this.props.onRegisterClick}>
-        Register
-      </button>
-    );
+  registerHandler(x) {
+    x.preventDefault();
+    this.props.onRegisterClick(this.state.username,this.state.password,this.state.fullname,this.state.email)
   },
 
   render() {
@@ -56,12 +53,12 @@ export default React.createClass({
         <div className="signup">
           <h2>Create a new Account</h2>
           <form>
-            <label>Full Name: <input id='fullname' type="text" className="fullname"/></label>
-            <label>Email: <input id='email' type="text" className="email"/></label>
-            <label>Username: <input id='username' type="text" className="user"/></label>
-            <label>Password: <input id='password' type="password" className="password"/></label>
+            <label>Full Name: <input onChange={this.updateFullname} id='fullname' type="text" className="fullname"/></label>
+            <label>Email: <input onChange={this.updateEmail} id='email' type="text" className="email"/></label>
+            <label>Username: <input onChange={this.updateUsername} id='username' type="text" className="user"/></label>
+            <label>Password: <input onChange={this.updatePassword} id='password' type="password" className="password"/></label>
             <label>Enter Your Password Again: <input type="password" className="pass2"/></label>
-            {this.registerBtn()}
+            <button id='registerUser' onClick={this.registerHandler} value='Register'></button>
           </form>
         </div>
       </div>
