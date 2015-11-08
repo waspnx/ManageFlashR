@@ -4,7 +4,7 @@ import DeckModel from './deck-model';
 
 export default Backbone.Collection.extend({
 
-  url: APP_URL,
+  url: APP_URL+'decks',
 
   model: DeckModel,
   
