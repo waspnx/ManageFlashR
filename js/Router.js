@@ -4,6 +4,7 @@ import moment from 'moment';
 import Backbone from 'backbone';
 import React from 'react';
 import ReactDom from 'react-dom';
+
 import Cookies from 'js-cookie';
 
 import {
@@ -16,6 +17,7 @@ import {
 } from './resources';
 
 import {
+  AddDeckView,
   RegisterPage,
   UserView,
   DeckView,
@@ -152,6 +154,15 @@ let Router = Backbone.Router.extend({
   },
 
   home() {
+ 
+    this.user.fetch().then(() => {
+      this.render(<HomeView
+        onHomeClick={() => this.goto('')}
+        onLoginClick={() => this.goto('login')}
+        onLogoutClick={()=> this.goto('logout')}
+        onRegisterClick={() => this.goto('register')}/>
+      );
+    });
 
     this.goto('isLogged');
 
@@ -189,18 +200,26 @@ let Router = Backbone.Router.extend({
         onAddCardClick = {() => this.goto('addCard')}
         onBackBtnClick = {() => this.goto('decks')}/>
       );
-   });  
+    });  
+  },
+
+ imageView() {
+    
+  },
+
+  start() {
+    Backbone.history.start();
   },
 
   addDeck(){
+    console.log('hello')
     this.render(
-      <addDeck
-      onBackBtnClick={() => this.goto('decks')}
-      onSubmitClick={(title) =>{
-        letnewQuestion = document.querySelector('.enterTitle').value;
-        letnewDeck = new DeckCollection ({
-          Title: title,
-        })
+      <AddDeckView
+        onBackBtnClick={() => this.goto('deck')}
+        onSubmitClick={(title) =>{
+          let newDeck = new DeckModel ({
+            Title: title,
+          })
         newDeck.save().then(() => {
           this.goto('addCard')})
         }
@@ -219,9 +238,11 @@ let Router = Backbone.Router.extend({
           })
           cardAddition.save().then(()=> this.goto('deck/:deckID'));
         }}/>
-    );
-  },
+     );
+   },
+
+
+
 
 });
-
 export default Router;
