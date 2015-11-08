@@ -68,7 +68,7 @@ var _cardModel2 = _interopRequireDefault(_cardModel);
 
 exports['default'] = _backbone2['default'].Collection.extend({
 
-  url: _data.APP_URL,
+  url: _data.APP_URL + '/signup',
 
   model: _cardModel2['default']
 
@@ -290,7 +290,6 @@ var Router = _backbone2['default'].Router.extend({
     'login': 'login',
     'isLogged': 'isLogged',
     'registerPage': 'registerPage',
-    'register': 'register',
     'decks': 'dash',
     'decks/:deckID': 'deckView',
     'addDeck': 'addDeck',
@@ -322,22 +321,70 @@ var Router = _backbone2['default'].Router.extend({
     _reactDom2['default'].render(component, this.el);
   },
 
-  loginPage: function loginPage() {
+  // Setting Auth Token in Cookies.
+  setHeaders: function setHeaders() {
+    var cookie = JSON.parse(_jsCookie2['default'].get('user'));
+    _jquery2['default'].ajaxSetup({
+      headers: {
+        'Access-Token': cookie.user.auth_token
+      }
+    });
+    // OLD VERSION - Not working
+    // let user = Cookies.get('user');
+    // // console.log(user);
+    // if (user) {
+    //   let auth = JSON.parse(user).user.access_token;
+    //   // console.log(auth);
+    //   $.ajaxSetup({
+    //     headers: {
+    //       'Access-Token': auth
+    //     }
+    //   });
+    // } else {
+    //   this.goto('');
+    // }
+  },
+
+  // Home Route (redirect)
+  home: function home() {
     var _this = this;
+
+    this.user.fetch().then(function () {
+      _this.render(_react2['default'].createElement(HomeView, {
+        onHomeClick: function () {
+          return _this.goto('');
+        },
+        onLoginClick: function () {
+          return _this.goto('login');
+        },
+        onLogoutClick: function () {
+          return _this.goto('logout');
+        },
+        onRegisterClick: function () {
+          return _this.goto('register');
+        } }));
+    });
+    this.goto('isLogged');
+  },
+
+  // Login Page and function, Login check.
+
+  loginPage: function loginPage() {
+    var _this2 = this;
 
     _reactDom2['default'].render(_react2['default'].createElement(_views.LoginPage, {
       user: _jsCookie2['default'].getJSON('user'),
       onLoginClick: function (user, pass) {
-        return _this.login(user, pass);
+        return _this2.login(user, pass);
       },
       // onLogoutClick={() => this.navigate('logout', {trigger: true})}
       onRegisterClick: function () {
-        return _this.navigate('registerPage', { trigger: true });
+        return _this2.navigate('registerPage', { trigger: true });
       } }), document.querySelector('.app'));
   },
 
   login: function login(user, pass) {
-    var _this2 = this;
+    var _this3 = this;
 
     var request = _jquery2['default'].ajax({
       url: 'https://rocky-garden-9800.herokuapp.com/login',
@@ -355,34 +402,11 @@ var Router = _backbone2['default'].Router.extend({
           'Access-Token': data.user.auth_token
         }
       });
-      _this2.goto('decks');
+      _this3.goto('decks');
     }).fail(function () {
       (0, _jquery2['default'])('.app').html('Try again');
-      _this2.goto('loginPage');
+      _this3.goto('loginPage');
     });
-  },
-
-  setHeaders: function setHeaders() {
-    var cookie = JSON.parse(_jsCookie2['default'].get('user'));
-    _jquery2['default'].ajaxSetup({
-      headers: {
-        'Access-Token': cookie.user.auth_token
-      }
-    });
-
-    // let user = Cookies.get('user');
-    // // console.log(user);
-    // if (user) {
-    //   let auth = JSON.parse(user).user.access_token;
-    //   // console.log(auth);
-    //   $.ajaxSetup({
-    //     headers: {
-    //       'Access-Token': auth
-    //     }
-    //   });
-    // } else {
-    //   this.goto('');
-    // }
   },
 
   isLogged: function isLogged() {
@@ -399,87 +423,50 @@ var Router = _backbone2['default'].Router.extend({
     }
   },
 
+  // Registration
+
   registerPage: function registerPage() {
-    var _this3 = this;
-
-    this.setHeaders();
-
-    _reactDom2['default'].render(_react2['default'].createElement(_views.RegisterPage, {
-      user: _jsCookie2['default'].getJSON('user'),
-      onRegisterClick: function () {
-        return _this3.navigate('register', { trigger: true });
-      } }), document.querySelector('.app'));
-  },
-
-  register: function register() {
     var _this4 = this;
 
-    this.setHeaders();
-
-    var request = _jquery2['default'].ajax({
-      url: 'https://rocky-garden-9800.herokuapp.com/signup',
-      method: 'POST',
-      data: {
-        username: (0, _jquery2['default'])('#username').val(),
-        fullname: (0, _jquery2['default'])('#fullname').val(),
-        email: (0, _jquery2['default'])('#email').val(),
-        password: (0, _jquery2['default'])('#password').val()
-      }
-    });
-    (0, _jquery2['default'])('.app').html('loading...');
-    request.then(function (data) {
-      _jsCookie2['default'].set('user', data);
-      _jquery2['default'].ajaxSetup({
-        headers: {
-          auth_token: data.access_token
-        }
-      });
-      _this4.goto('decks');
-    }).fail(function () {
-      (0, _jquery2['default'])('.app').html('Submit again');
-      _this4.goto('registerPage');
-    });
+    this.render(_react2['default'].createElement(
+      'wrap',
+      null,
+      _react2['default'].createElement(_views.NavView, null),
+      _react2['default'].createElement(_views.RegisterPage, {
+        user: _jsCookie2['default'].getJSON('user'),
+        onRegisterClick: function (user, pass, fullname, email) {
+          var newUser = new _resources.UserModel({
+            username: user,
+            password: pass,
+            full_name: fullname,
+            email: email
+          });
+          newUser.save({}, { url: 'https://rocky-garden-9800.herokuapp.com/signup' }).then(function () {
+            _this4.goto('loginPage');
+          });
+        } })
+    ));
   },
 
-  home: function home() {
-    var _this5 = this;
-
-    this.user.fetch().then(function () {
-      _this5.render(_react2['default'].createElement(HomeView, {
-        onHomeClick: function () {
-          return _this5.goto('');
-        },
-        onLoginClick: function () {
-          return _this5.goto('login');
-        },
-        onLogoutClick: function () {
-          return _this5.goto('logout');
-        },
-        onRegisterClick: function () {
-          return _this5.goto('register');
-        } }));
-    });
-
-    this.goto('isLogged');
-  },
+  // Initial Content View - showing the Decks (with routes to add/view decks)
 
   dash: function dash() {
-    var _this6 = this;
+    var _this5 = this;
 
     this.deck.fetch().then(function (data) {
-      _this6.render(_react2['default'].createElement(_views.UserView, {
+      _this5.render(_react2['default'].createElement(_views.UserView, {
         data: data,
         onDeckClick: function (id) {
-          return _this6.goto('decks/' + id);
+          return _this5.goto('decks/' + id);
         },
         onAddDeckClick: function () {
-          return _this6.goto('addDeck');
+          return _this5.goto('addDeck');
         } }));
     });
   },
 
   addDeck: function addDeck() {
-    var _this7 = this;
+    var _this6 = this;
 
     this.setHeaders();
 
@@ -492,46 +479,82 @@ var Router = _backbone2['default'].Router.extend({
 
     this.render(_react2['default'].createElement(_views.AddDeckView, {
       onBackBtnClick: function () {
-        return _this7.goto('decks');
+        return _this6.goto('decks');
       },
       onSubmitClick: function (title) {
-        _this7.setHeaders();
+        _this6.setHeaders();
         var newDeck = new _resources.DeckModel({
           title: title
         });
         newDeck.save().then(function () {
-          _this7.goto('decks');
+          _this6.goto('decks');
         });
       } }));
   },
 
   deckView: function deckView(id) {
-    var _this8 = this;
+    var _this7 = this;
 
     this.setHeaders();
-
     var baseUrl = 'https://rocky-garden-9800.herokuapp.com/decks/';
     var thisId = '' + id;
     // console.log(`${baseUrl}${id}/cards`);
-
     // THIS IS UNNECESSARY - USE FETCH()
     // let request = $.ajax({
     //   url: `${baseUrl}${id}/cards`,
     //   method:'GET',
     // });
     //---------------------------------
-
     this.card.fetch({ url: baseUrl + thisId + '/cards' }).then(function (data) {
-      _this8.render(_react2['default'].createElement(_views.DeckView, {
+      _this7.render(_react2['default'].createElement(_views.DeckView, {
         data: data,
         onCardSelect: function (cardId) {
-          return _this8.goto('decks/' + thisId + '/cards/' + cardId);
+          return _this7.goto('decks/' + thisId + '/cards/' + cardId);
         },
         onAddCardClick: function () {
-          return _this8.goto('decks/' + thisId + '/addCard');
+          return _this7.goto('decks/' + thisId + '/addCard');
         },
         onBackBtnClick: function () {
-          return _this8.goto('decks');
+          return _this7.goto('decks');
+        } }));
+    });
+  },
+
+  // Card Views and edit/add routes.
+
+  cardView: function cardView(deckId, cardId) {
+    var _this8 = this;
+
+    this.setHeaders();
+
+    var baseUrl = 'https://rocky-garden-9800.herokuapp.com/decks/';
+    var thisId = '' + deckId;
+    var thatId = '' + cardId;
+
+    this.card.fetch({ url: baseUrl + thisId + '/cards' }).then(function (data) {
+      return _this8.render(_react2['default'].createElement(_views.EditCardView, {
+        data: data.cards.filter(function (x) {
+          return x.id === Number(thatId);
+        }).pop(),
+        onSubmitClick: function (quest, ans) {
+          var newCard = new _resources.CardModel({
+            id: thatId,
+            question: quest,
+            answer: ans
+          });
+          newCard.save({}, { url: 'https://rocky-garden-9800.herokuapp.com/cards/' + thatId }).then(function () {
+            _this8.goto('decks/' + thisId);
+          });
+        },
+        onDeleteClick: function () {
+          _this8.setHeaders();
+          var deadCard = new _resources.CardModel({
+            id: thatId
+          });
+          deadCard.destroy({
+            url: 'https://rocky-garden-9800.herokuapp.com/cards/' + thatId,
+            wait: true
+          }).then(_this8.goto('decks/' + thisId));
         } }));
     });
   },
@@ -552,70 +575,30 @@ var Router = _backbone2['default'].Router.extend({
     });
   },
 
-  cardView: function cardView(deckId, cardId) {
+  addCard: function addCard(deckId) {
     var _this10 = this;
 
     this.setHeaders();
 
     var baseUrl = 'https://rocky-garden-9800.herokuapp.com/decks/';
     var thisId = '' + deckId;
-    var thatId = '' + cardId;
-
-    this.card.fetch({ url: baseUrl + thisId + '/cards' }).then(function (data) {
-      return _this10.render(_react2['default'].createElement(_views.EditCardView, {
-        data: data.cards.filter(function (x) {
-          return x.id === Number(thatId);
-        }).pop(),
-        onSubmitClick: function (quest, ans) {
-          var newCard = new _resources.CardModel({
-            id: thatId,
-            question: quest,
-            answer: ans
-          });
-          newCard.save({}, { url: 'https://rocky-garden-9800.herokuapp.com/cards/' + thatId }).then(function () {
-            _this10.goto('decks/' + thisId);
-          });
-        },
-        onDeleteClick: function () {
-          _this10.setHeaders();
-          var deadCard = new _resources.CardModel({
-            id: thatId
-          });
-          deadCard.destroy({
-            url: 'https://rocky-garden-9800.herokuapp.com/cards/' + thatId,
-            wait: true
-          }).then(_this10.goto('decks/' + thisId));
-        } }));
-    });
-  },
-
-  addCard: function addCard(deckId) {
-    var _this11 = this;
-
-    this.setHeaders();
-
-    var baseUrl = 'https://rocky-garden-9800.herokuapp.com/decks/';
-    var thisId = '' + deckId;
     // let endofurl = '/cards';
-
     this.render(_react2['default'].createElement(_views.AddCardView, {
       onCancelClick: function () {
-        return _this11.goto('decks/' + deckId);
+        return _this10.goto('decks/' + deckId);
       },
       onSubmit: function (quest, ans) {
-        _this11.setHeaders();
-        // let cardAddition = new CardModel({
-
-        // })
-        _this11.card.create({
+        _this10.setHeaders();
+        _this10.card.create({
           question: quest,
           answer: ans
         }, { url: baseUrl + thisId + '/cards' });
-        _this11.goto('decks/' + thisId);
+        _this10.goto('decks/' + thisId);
       } }));
   }
 
 });
+
 exports['default'] = Router;
 module.exports = exports['default'];
 
@@ -1020,21 +1003,6 @@ var _jquery2 = _interopRequireDefault(_jquery);
 exports['default'] = _react2['default'].createClass({
   displayName: 'login',
 
-  // getStatus() {
-  //     let user = this.props.user;
-  //     if (user) {
-  //       let name = user.username;
-  //       let msg = `Welcome user.username}`;
-  //       return (
-  //         <span>{msg}</span>
-  //       );
-  //     } else {
-  //       return (
-  //         <span>You are not logged in</span>
-  //       );
-  //     }
-  // },
-
   selectRegHandler: function selectRegHandler() {
     this.props.onRegisterClick();
   },
@@ -1083,39 +1051,55 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 },{"./register":18,"jquery":22,"react":181,"react-dom":25,"underscore":182}],17:[function(require,module,exports){
-"use strict";
+'use strict';
 
-Object.defineProperty(exports, "__esModule", {
+Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
-exports["default"] = _react2["default"].createClass({
-  displayName: "nav",
+exports['default'] = _react2['default'].createClass({
+  displayName: 'nav',
+
+  // getStatus() {
+  //     let user = this.props.user;
+  //     if (user) {
+  //       let name = user.username;
+  //       let msg = `Welcome user.username}`;
+  //       return (
+  //         <span>{msg}</span>
+  //       );
+  //     } else {
+  //       return (
+  //         <span>You are not logged in</span>
+  //       );
+  //     }
+  // },
 
   render: function render() {
-    return _react2["default"].createElement(
-      "div",
-      { className: "navbar" },
-      _react2["default"].createElement(
-        "button",
+    console.log('GOD DAMMIT');
+    return _react2['default'].createElement(
+      'div',
+      { className: 'navbar' },
+      _react2['default'].createElement(
+        'button',
         { onNavigate: this.props.goHome },
-        "Home"
+        'Home'
       ),
-      _react2["default"].createElement(
-        "button",
+      _react2['default'].createElement(
+        'button',
         null,
-        "Logout"
+        'Logout'
       )
     );
   }
 });
-module.exports = exports["default"];
+module.exports = exports['default'];
 
 },{"react":181}],18:[function(require,module,exports){
 'use strict';
@@ -1146,6 +1130,14 @@ exports['default'] = _react2['default'].createClass({
     this.props.onLoginClick(this.state.username, this.state.password);
   },
 
+  updateUsername: function updateUsername(x) {
+    var newUsername = x.currentTarget.value;
+
+    this.setState({
+      username: newUsername
+    });
+  },
+
   updatePassword: function updatePassword(x) {
     var newPassword = x.currentTarget.value;
 
@@ -1154,36 +1146,25 @@ exports['default'] = _react2['default'].createClass({
     });
   },
 
-  updateUsername: function updateUsername(x) {
-    var newUsername = x.currentTarget.value;
+  updateFullname: function updateFullname(x) {
+    var newFullname = x.currentTarget.value;
 
     this.setState({
-      username: newUsername
+      fullname: newFullname
     });
   },
 
-  updateUsername: function updateUsername(x) {
-    var newUsername = x.currentTarget.value;
+  updateEmail: function updateEmail(x) {
+    var newEmail = x.currentTarget.value;
 
     this.setState({
-      username: newUsername
+      email: newEmail
     });
   },
 
-  updateUsername: function updateUsername(x) {
-    var newUsername = x.currentTarget.value;
-
-    this.setState({
-      username: newUsername
-    });
-  },
-
-  registerBtn: function registerBtn() {
-    return _react2['default'].createElement(
-      'button',
-      { id: 'registerUser', onClick: this.props.onRegisterClick },
-      'Register'
-    );
+  registerHandler: function registerHandler(x) {
+    x.preventDefault();
+    this.props.onRegisterClick(this.state.username, this.state.password, this.state.fullname, this.state.email);
   },
 
   render: function render() {
@@ -1205,25 +1186,25 @@ exports['default'] = _react2['default'].createClass({
             'label',
             null,
             'Full Name: ',
-            _react2['default'].createElement('input', { id: 'fullname', type: 'text', className: 'fullname' })
+            _react2['default'].createElement('input', { onChange: this.updateFullname, id: 'fullname', type: 'text', className: 'fullname' })
           ),
           _react2['default'].createElement(
             'label',
             null,
             'Email: ',
-            _react2['default'].createElement('input', { id: 'email', type: 'text', className: 'email' })
+            _react2['default'].createElement('input', { onChange: this.updateEmail, id: 'email', type: 'text', className: 'email' })
           ),
           _react2['default'].createElement(
             'label',
             null,
             'Username: ',
-            _react2['default'].createElement('input', { id: 'username', type: 'text', className: 'user' })
+            _react2['default'].createElement('input', { onChange: this.updateUsername, id: 'username', type: 'text', className: 'user' })
           ),
           _react2['default'].createElement(
             'label',
             null,
             'Password: ',
-            _react2['default'].createElement('input', { id: 'password', type: 'password', className: 'password' })
+            _react2['default'].createElement('input', { onChange: this.updatePassword, id: 'password', type: 'password', className: 'password' })
           ),
           _react2['default'].createElement(
             'label',
@@ -1231,7 +1212,7 @@ exports['default'] = _react2['default'].createClass({
             'Enter Your Password Again: ',
             _react2['default'].createElement('input', { type: 'password', className: 'pass2' })
           ),
-          this.registerBtn()
+          _react2['default'].createElement('button', { id: 'registerUser', onClick: this.registerHandler, value: 'Register' })
         )
       )
     );

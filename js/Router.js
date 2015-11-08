@@ -35,7 +35,6 @@ let Router = Backbone.Router.extend({
     'login'                       : 'login',
     'isLogged'                    : 'isLogged',
     'registerPage'                : 'registerPage',
-    'register'                    : 'register',
     'decks'                       : 'dash',
     'decks/:deckID'               : 'deckView',
     'addDeck'                     : 'addDeck',
@@ -66,6 +65,45 @@ let Router = Backbone.Router.extend({
   render(component){
     ReactDom.render(component, this.el);
   },
+
+// Setting Auth Token in Cookies.
+  setHeaders() {
+    let cookie = JSON.parse(Cookies.get('user'));
+      $.ajaxSetup({
+        headers: {
+         'Access-Token': cookie.user.auth_token
+      }
+    })
+    // OLD VERSION - Not working
+      // let user = Cookies.get('user');
+      // // console.log(user);
+      // if (user) {
+      //   let auth = JSON.parse(user).user.access_token;
+      //   // console.log(auth);
+      //   $.ajaxSetup({
+      //     headers: {
+      //       'Access-Token': auth
+      //     }
+      //   });
+      // } else {
+      //   this.goto('');
+      // }
+  },
+
+// Home Route (redirect)
+  home() {
+    this.user.fetch().then(() => {
+      this.render(<HomeView
+        onHomeClick={() => this.goto('')}
+        onLoginClick={() => this.goto('login')}
+        onLogoutClick={()=> this.goto('logout')}
+        onRegisterClick={() => this.goto('register')}/>
+      );
+    });
+    this.goto('isLogged');
+  },
+
+// Login Page and function, Login check.
 
   loginPage() {
     ReactDom.render(
@@ -102,29 +140,6 @@ let Router = Backbone.Router.extend({
     });
   },
 
-  setHeaders() {
-    let cookie = JSON.parse(Cookies.get('user'));
-      $.ajaxSetup({
-        headers: {
-         'Access-Token': cookie.user.auth_token
-      }
-    })
-
-    // let user = Cookies.get('user');
-    // // console.log(user);
-    // if (user) {
-    //   let auth = JSON.parse(user).user.access_token;
-    //   // console.log(auth);
-    //   $.ajaxSetup({
-    //     headers: {
-    //       'Access-Token': auth
-    //     }
-    //   });
-    // } else {
-    //   this.goto('');
-    // }
-  },
-
   isLogged() {
     if (Cookies.get('user')) {
       let cookie = JSON.parse(Cookies.get('user'));
@@ -139,59 +154,29 @@ let Router = Backbone.Router.extend({
     }
   },
 
+// Registration
+
   registerPage() {
-    this.setHeaders();
-
-    ReactDom.render(
-      <RegisterPage 
-        user={Cookies.getJSON('user')}
-        onRegisterClick={() => this.navigate('register', {trigger: true})}/>,
-      document.querySelector('.app')
-    );
+    this.render(
+      <wrap>
+        <NavView/>
+        <RegisterPage 
+          user={Cookies.getJSON('user')}
+          onRegisterClick={(user,pass,fullname,email) => {
+            let newUser = new UserModel({
+              username: user,
+              password: pass,
+              full_name: fullname,
+              email: email
+            })
+            newUser.save({},{url: 'https://rocky-garden-9800.herokuapp.com/signup'}).then(()=>{this.goto('loginPage')})
+          }
+        }/>
+      </wrap>
+    )
   },
 
-  register() {
-    this.setHeaders();
-
-    let request = $.ajax({
-      url: `https://rocky-garden-9800.herokuapp.com/signup`,
-      method: 'POST',
-      data: {
-        username: $('#username').val(),
-        fullname: $('#fullname').val(),
-        email: $('#email').val(),
-        password: $('#password').val(),
-      }
-    });
-    $('.app').html('loading...');
-    request.then((data) => {
-      Cookies.set('user', data);
-      $.ajaxSetup({
-        headers: {
-          auth_token: data.access_token
-        }
-      });
-      this.goto('decks');
-    }).fail(() => {
-      $('.app').html('Submit again');
-      this.goto('registerPage');
-    });
-  },
-
-  home() {
- 
-    this.user.fetch().then(() => {
-      this.render(<HomeView
-        onHomeClick={() => this.goto('')}
-        onLoginClick={() => this.goto('login')}
-        onLogoutClick={()=> this.goto('logout')}
-        onRegisterClick={() => this.goto('register')}/>
-      );
-    });
-
-    this.goto('isLogged');
-
-  },
+// Initial Content View - showing the Decks (with routes to add/view decks)
 
   dash() {
     this.deck.fetch().then((data) => {
@@ -230,18 +215,15 @@ let Router = Backbone.Router.extend({
 
   deckView(id) {
     this.setHeaders();
-    
     let baseUrl = 'https://rocky-garden-9800.herokuapp.com/decks/';
     let thisId = `${id}`;
     // console.log(`${baseUrl}${id}/cards`);
-
-// THIS IS UNNECESSARY - USE FETCH()
-    // let request = $.ajax({
-    //   url: `${baseUrl}${id}/cards`,
-    //   method:'GET',
-    // });
-//---------------------------------
-
+  // THIS IS UNNECESSARY - USE FETCH()
+        // let request = $.ajax({
+        //   url: `${baseUrl}${id}/cards`,
+        //   method:'GET',
+        // });
+  //---------------------------------
     this.card.fetch({url: baseUrl+thisId+'/cards'}).then((data) => {
       this.render(
         <DeckView
@@ -253,15 +235,7 @@ let Router = Backbone.Router.extend({
     });  
   },
  
-  saveEdit(quest, ans, cardId) {
-    let thatId = `${cardId}`;
-    console.log(this.card.get(thatId));
-    this.setHeaders();
-    this.card.get(thatId).then(()=> save({
-      Question: quest,
-      Answer: ans
-    })).then(() => this.goto('deck/'+ deckId));
-  },
+// Card Views and edit/add routes.
 
   cardView(deckId, cardId) {
     this.setHeaders();
@@ -300,22 +274,27 @@ let Router = Backbone.Router.extend({
     )
   )},
 
+  saveEdit(quest, ans, cardId) {
+    let thatId = `${cardId}`;
+    console.log(this.card.get(thatId));
+    this.setHeaders();
+    this.card.get(thatId).then(()=> save({
+      Question: quest,
+      Answer: ans
+    })).then(() => this.goto('deck/'+ deckId));
+  },
+
   addCard(deckId) {
     this.setHeaders();
 
     let baseUrl = 'https://rocky-garden-9800.herokuapp.com/decks/'; 
     let thisId = `${deckId}`;
     // let endofurl = '/cards';
-
-
     this.render(
       <AddCardView 
         onCancelClick={()=> this.goto('decks/'+ deckId)}
         onSubmit={(quest, ans) => {
           this.setHeaders();
-          // let cardAddition = new CardModel({
-            
-          // })
           this.card.create({
             question: quest,
             answer: ans
@@ -326,4 +305,5 @@ let Router = Backbone.Router.extend({
    },
 
 });
+
 export default Router;
