@@ -30,7 +30,7 @@ export default React.createClass({
 
   submitHandler(e) {
     e.preventDefault();
-    this.props.onSubmit(this.state.Question, this.state.Answer);
+    this.props.onSubmitClick(this.state.Question, this.state.Answer);
   },
 
   render() {

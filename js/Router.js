@@ -43,7 +43,6 @@ let Router = Backbone.Router.extend({
     'addCard'       : 'addCard'
   },
 
-
   start() {
     Backbone.history.start();
   },
@@ -233,15 +232,34 @@ let Router = Backbone.Router.extend({
       );
     });  
   },
+ 
+  saveEdit(quest, ans, deckId, cardId) {
+    this.card.get(cardId).save({
+      Question: quest,
+      Answer: ans
+    }).then(() => this.goto('deck/'+ deckId));
+  },
 
-  addCard() {
+  cardView(cardId) {
+    let card = this.card.get(cardId);
+
+    this.render(
+      <EditCardView 
+        data={card}
+        onSubmitClick={ (quest, ans) => this.saveEdit(quest, ans, cardId) }
+      />
+    );
+  },
+
+  addCard(deckId) {
+
     this.render(
       <AddCardView 
-        onCancelClick={this.goto('decks/:deckID')}
-        onAddCard={(quest, ans) => {
+        onCancelClick={()=> this.goto('deck/'+ deckId)}
+        onSubmit={(quest, ans) => {
           let cardAddition = new CardModel({
-            Question: quest,
-            Answer: ans
+            question: quest,
+            answer: ans
           })
           cardAddition.save().then(()=> this.goto('decks/:deckID'));
         }}/>

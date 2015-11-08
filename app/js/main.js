@@ -515,18 +515,44 @@ var Router = _backbone2['default'].Router.extend({
     });
   },
 
-  addCard: function addCard() {
+  saveEdit: function saveEdit(quest, ans, deckId, cardId) {
     var _this9 = this;
 
+    this.card.get(cardId).save({
+      Question: quest,
+      Answer: ans
+    }).then(function () {
+      return _this9.goto('deck/' + deckId);
+    });
+  },
+
+  cardView: function cardView(cardId) {
+    var _this10 = this;
+
+    var card = this.card.get(cardId);
+
+    this.render(_react2['default'].createElement(_views.EditCardView, {
+      data: card,
+      onSubmitClick: function (quest, ans) {
+        return _this10.saveEdit(quest, ans, cardId);
+      }
+    }));
+  },
+
+  addCard: function addCard(deckId) {
+    var _this11 = this;
+
     this.render(_react2['default'].createElement(_views.AddCardView, {
-      onCancelClick: this.goto('decks/:deckID'),
-      onAddCard: function (quest, ans) {
+      onCancelClick: function () {
+        return _this11.goto('deck/' + deckId);
+      },
+      onSubmit: function (quest, ans) {
         var cardAddition = new _resources.CardModel({
-          Question: quest,
-          Answer: ans
+          question: quest,
+          answer: ans
         });
         cardAddition.save().then(function () {
-          return _this9.goto('decks/:deckID');
+          return _this11.goto('decks/:deckID');
         });
       } }));
   }
@@ -551,6 +577,11 @@ var _react2 = _interopRequireDefault(_react);
 exports["default"] = _react2["default"].createClass({
   displayName: "addCard",
 
+  submitHandler: function submitHandler(e) {
+    e.preventDefault();
+    this.props.onSubmit(this.state.Answer, this.state.Question);
+  },
+
   // e stands for event
   // setting changed state to new state (question and answer)
   updateQuestion: function updateQuestion(e) {
@@ -569,9 +600,9 @@ exports["default"] = _react2["default"].createClass({
     });
   },
 
-  submitHandler: function submitHandler(e) {
+  cancelHandler: function cancelHandler(e) {
     e.preventDefault();
-    this.props.onSubmit(this.state.Question, this.state.Answer);
+    this.props.onCancelClick();
   },
 
   render: function render() {
@@ -587,26 +618,20 @@ exports["default"] = _react2["default"].createClass({
           "Question"
         ),
         _react2["default"].createElement("input", { type: "textarea",
-          onChange: this.updateQuestion,
-          value: this.state.Question }),
+          onChange: this.updateQuestion }),
         _react2["default"].createElement(
           "h2",
           null,
           "Answer"
         ),
         _react2["default"].createElement("input", { type: "text",
-          onChange: this.updateAnswer,
-          value: this.state.Answer }),
+          onChange: this.updateAnswer }),
         _react2["default"].createElement(
           "button",
-          { onClick: this.props.cancelClick },
+          { onClick: this.cancelHandler },
           "Cancel"
         ),
-        _react2["default"].createElement(
-          "input",
-          { type: "submit", onClick: this.submitHandler },
-          "Save Card"
-        )
+        _react2["default"].createElement("input", { type: "submit", value: "Save Card", onClick: this.submitHandler })
       )
     );
   }
@@ -811,7 +836,7 @@ exports["default"] = _react2["default"].createClass({
 
   submitHandler: function submitHandler(e) {
     e.preventDefault();
-    this.props.onSubmit(this.state.Question, this.state.Answer);
+    this.props.onSubmitClick(this.state.Question, this.state.Answer);
   },
 
   render: function render() {
