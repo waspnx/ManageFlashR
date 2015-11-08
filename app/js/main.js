@@ -472,7 +472,7 @@ var Router = _backbone2['default'].Router.extend({
       } }));
   },
 
-  saveEdit: function saveEdit(quest, ans, cardId) {
+  saveEdit: function saveEdit(quest, ans, deckId, cardId) {
     var _this8 = this;
 
     this.card.get(cardId).save({
@@ -505,8 +505,8 @@ var Router = _backbone2['default'].Router.extend({
       },
       onSubmit: function (quest, ans) {
         var cardAddition = new _resources.CardModel({
-          Question: quest,
-          Answer: ans
+          question: quest,
+          answer: ans
         });
         cardAddition.save().then(function () {
           return _this10.goto('deck/');

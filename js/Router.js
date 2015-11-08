@@ -196,7 +196,7 @@ let Router = Backbone.Router.extend({
     )
   },
  
-  saveEdit(quest, ans, cardId) {
+  saveEdit(quest, ans, deckId, cardId) {
     this.card.get(cardId).save({
       Question: quest,
       Answer: ans
@@ -221,8 +221,8 @@ let Router = Backbone.Router.extend({
         onCancelClick={()=> this.goto('deck/'+ deckId)}
         onSubmit={(quest, ans) => {
           let cardAddition = new CardModel({
-            Question: quest,
-            Answer: ans
+            question: quest,
+            answer: ans
           })
          cardAddition.save().then(()=> this.goto('deck/'));
         }}/>
