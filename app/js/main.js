@@ -92,7 +92,7 @@ var _data = require('../data');
 
 exports['default'] = _backbone2['default'].Model.extend({
 
-  urlRoot: _data.APP_URL,
+  urlRoot: _data.APP_URL + 'decks/',
 
   idAttribute: 'id'
 
@@ -120,7 +120,7 @@ var _deckModel2 = _interopRequireDefault(_deckModel);
 
 exports['default'] = _backbone2['default'].Collection.extend({
 
-  url: _data.APP_URL,
+  url: _data.APP_URL + 'decks',
 
   model: _deckModel2['default']
 
@@ -291,8 +291,8 @@ var Router = _backbone2['default'].Router.extend({
     'isLogged': 'isLogged',
     'registerPage': 'registerPage',
     'register': 'register',
-    'deck': 'userView',
-    'deck/:deckID': 'deckView',
+    'decks': 'dash',
+    'decks/:deckID': 'deckView',
     'addDeck': 'addDeck',
     'card/:cardID': 'cardView',
     'addCard': 'addCard'
@@ -354,7 +354,7 @@ var Router = _backbone2['default'].Router.extend({
           'Access-Token': data.user.auth_token
         }
       });
-      _this2.goto('deck');
+      _this2.goto('decks');
     }).fail(function () {
       (0, _jquery2['default'])('.app').html('Try again');
       _this2.goto('loginPage');
@@ -369,7 +369,7 @@ var Router = _backbone2['default'].Router.extend({
           'Access-Token': cookie.user.auth_token
         }
       });
-      this.goto('deck');
+      this.goto('decks');
     } else {
       this.goto('loginPage');
     }
@@ -408,7 +408,7 @@ var Router = _backbone2['default'].Router.extend({
           auth_token: data.access_token
         }
       });
-      _this4.goto('deck');
+      _this4.goto('decks');
     }).fail(function () {
       (0, _jquery2['default'])('.app').html('Submit again');
       _this4.goto('registerPage');
@@ -420,13 +420,17 @@ var Router = _backbone2['default'].Router.extend({
     this.goto('isLogged');
   },
 
-  deck: function deck() {
+  dash: function dash() {
     var _this5 = this;
 
-    this.deck.fetch().then(function () {
+    this.deck.fetch().then(function (data) {
       _this5.render(_react2['default'].createElement(_views.UserView, {
-        onDeckSelect: function (id) {
-          return _this5.goto('deck/' + id);
+        data: data,
+        onDeckClick: function (id) {
+          return _this5.goto('decks/' + id);
+        },
+        onAddDeckClick: function () {
+          return _this5.goto('addDeck');
         } }));
     });
   },
@@ -434,8 +438,20 @@ var Router = _backbone2['default'].Router.extend({
   deckView: function deckView(id) {
     var _this6 = this;
 
-    this.card.fetch().then(function () {
-      _this6.render(_react2['default'].createElement('deckViewComponent', {
+    var baseUrl = 'https://rocky-garden-9800.herokuapp.com/decks/';
+    var thisId = '' + id;
+    var endofurl = '/cards';
+    // console.log(`${baseUrl}${id}/cards`);
+
+    var request = _jquery2['default'].ajax({
+      url: '' + baseUrl + id + '/cards',
+      method: 'GET'
+    });
+
+    request.then(function (data) {
+      console.log(data);
+      _this6.render(_react2['default'].createElement('deckView', {
+        data: data.cards,
         onCardSelect: function () {
           return _this6.goto('card/:id');
         },
@@ -443,7 +459,7 @@ var Router = _backbone2['default'].Router.extend({
           return _this6.goto('addCard');
         },
         onBackBtnClick: function () {
-          return _this6.goto('deck');
+          return _this6.goto('decks');
         } }));
     });
   },
@@ -453,7 +469,7 @@ var Router = _backbone2['default'].Router.extend({
 
     this.render(_react2['default'].createElement('addDeck', {
       onBackBtnClick: function () {
-        return _this7.goto('deck');
+        return _this7.goto('decks');
       },
       onSubmitClick: function (title) {
         letnewQuestion = document.querySelector('.enterTitle').value;
@@ -570,9 +586,6 @@ exports["default"] = _react2["default"].createClass({
 module.exports = exports["default"];
 
 },{"react":180}],12:[function(require,module,exports){
-// this view shows rows of flashR cards
-// that comprise the deck that was clicked in UserView
-
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -589,13 +602,18 @@ var _backbone = require('backbone');
 
 var _backbone2 = _interopRequireDefault(_backbone);
 
+var _underscore = require('underscore');
+
+var _underscore2 = _interopRequireDefault(_underscore);
+
+// this view shows rows of flashR cards
+// that comprise the deck that was clicked in UserView
+
 exports['default'] = _react2['default'].createClass({
   displayName: 'deckView',
 
   processCards: function processCards(data) {
-
     var onCardSelect = this.props.onCardSelect;
-
     return _react2['default'].createElement(
       'div',
       { className: 'cardContainer', key: data._id,
@@ -628,10 +646,11 @@ exports['default'] = _react2['default'].createClass({
   render: function render() {
     var _this = this;
 
-    _react2['default'].createElement(
+    console.log(this);
+    return _react2['default'].createElement(
       'div',
       { className: 'deckViewContainer' },
-      this.props.cards().map(this.processCards),
+      this.props.data.cards.map(this.processCards),
       _react2['default'].createElement(
         'div',
         { className: 'btns' },
@@ -652,7 +671,7 @@ exports['default'] = _react2['default'].createClass({
 });
 module.exports = exports['default'];
 
-},{"backbone":19,"react":180}],13:[function(require,module,exports){
+},{"backbone":19,"react":180,"underscore":181}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -866,9 +885,9 @@ exports['default'] = _react2['default'].createClass({
           'form',
           { className: 'loginForm' },
           _react2['default'].createElement('input', { onChange: this.updateUsername, id: 'username', type: 'text', placeholder: 'Username', className: 'username field' }),
-          _react2['default'].createElement('input', { onChange: this.updatePassword, id: 'password', type: 'password', placeholder: 'password', className: 'password field' }),
-          _react2['default'].createElement('input', { onClick: this.onLoginHandler, type: 'submit', value: 'Login' }),
-          _react2['default'].createElement('input', { onClick: this.selectRegHandler, type: 'button', value: 'Register!' })
+          _react2['default'].createElement('input', { onChange: this.updatePassword, id: 'password', type: 'password', placeholder: 'Password', className: 'password field' }),
+          _react2['default'].createElement('input', { className: 'logBtn button', onClick: this.onLoginHandler, type: 'submit', value: 'Login' }),
+          _react2['default'].createElement('input', { className: 'regBtn button', onClick: this.selectRegHandler, type: 'button', value: 'Register!' })
         )
       )
     );
@@ -1052,10 +1071,6 @@ var _backbone = require('backbone');
 
 var _backbone2 = _interopRequireDefault(_backbone);
 
-var _jquery = require('jquery');
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
 var _underscore = require('underscore');
 
 var _underscore2 = _interopRequireDefault(_underscore);
@@ -1064,38 +1079,45 @@ exports['default'] = _react2['default'].createClass({
   displayName: 'userView',
 
   selectDeckHandler: function selectDeckHandler(id) {
-    this.props.onDeckSelect(id);
+    this.props.onDeckClick(id);
   },
 
-  processData: function processData(data) {
+  addDeckHandler: function addDeckHandler() {
+    this.props.onAddDeckClick;
+  },
+
+  processData: function processData(deck) {
     var _this = this;
 
+    // console.log(this.props.data.decks.id);
     return _react2['default'].createElement(
       'div',
-      { id: data.deck.id,
+      { key: deck.id, id: deck.id,
         onClick: function () {
-          return _this.selectDeckHandler(data.deck.id);
-        }, className: 'list deckThumb' },
-      data.deck.title
+          return _this.selectDeckHandler(deck.id);
+        },
+        className: 'list deckThumb' },
+      _react2['default'].createElement(
+        'h2',
+        null,
+        deck.title
+      )
     );
   },
 
   render: function render() {
-    var _this2 = this;
-
+    // console.log(this)
     return _react2['default'].createElement(
       'div',
       { className: 'deckwrapper' },
       _react2['default'].createElement(
         'div',
         { className: 'deckThumbList' },
-        this.props.deck.map(this.processData)
+        this.props.data.decks.map(this.processData)
       ),
       _react2['default'].createElement(
         'button',
-        { onClick: function () {
-            return _this2.addDeckHandler();
-          }, className: 'addDeck' },
+        { onClick: this.addDeckHandler, className: 'addDeck' },
         'Add a Deck'
       )
     );
@@ -1103,7 +1125,7 @@ exports['default'] = _react2['default'].createClass({
 });
 module.exports = exports['default'];
 
-},{"backbone":19,"jquery":21,"react":180,"underscore":181}],19:[function(require,module,exports){
+},{"backbone":19,"react":180,"underscore":181}],19:[function(require,module,exports){
 (function (global){
 //     Backbone.js 1.2.3
 

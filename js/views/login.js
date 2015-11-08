@@ -52,9 +52,9 @@ export default React.createClass({
         <div className='login'>
           <form className='loginForm'>
             <input onChange={this.updateUsername} id='username' type='text' placeholder='Username' className='username field'></input>
-            <input onChange={this.updatePassword} id='password' type='password' placeholder='password' className='password field'></input>
-            <input onClick={this.onLoginHandler} type='submit' value="Login"></input>
-            <input onClick={this.selectRegHandler} type='button' value="Register!"></input>
+            <input onChange={this.updatePassword} id='password' type='password' placeholder='Password' className='password field'></input>
+            <input className='logBtn button' onClick={this.onLoginHandler} type='submit' value="Login"></input>
+            <input className='regBtn button' onClick={this.selectRegHandler} type='button' value="Register!"></input>
           </form>
         </div>
       </div>

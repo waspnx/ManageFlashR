@@ -34,8 +34,8 @@ let Router = Backbone.Router.extend({
     'isLogged'      : 'isLogged',
     'registerPage'  : 'registerPage',
     'register'      : 'register',
-    'deck'          : 'userView',
-    'deck/:deckID'  : 'deckView',
+    'decks'         : 'dash',
+    'decks/:deckID' : 'deckView',
     'addDeck'       : 'addDeck',
     'card/:cardID'  : 'cardView',
     'addCard'       : 'addCard'
@@ -93,7 +93,7 @@ let Router = Backbone.Router.extend({
           'Access-Token': data.user.auth_token,
         }
       });
-      this.goto('deck');
+      this.goto('decks');
     }).fail(() => {
       $('.app').html('Try again');
       this.goto('loginPage');
@@ -108,7 +108,7 @@ let Router = Backbone.Router.extend({
          'Access-Token': cookie.user.auth_token
         }
       })
-      this.goto('deck');
+      this.goto('decks');
     } else {
       this.goto('loginPage');
     }
@@ -144,7 +144,7 @@ let Router = Backbone.Router.extend({
           auth_token: data.access_token
         }
       });
-      this.goto('deck');
+      this.goto('decks');
     }).fail(() => {
       $('.app').html('Submit again');
       this.goto('registerPage');
@@ -157,24 +157,37 @@ let Router = Backbone.Router.extend({
 
   },
 
-
-
-  deck() {
-    this.deck.fetch().then(()=> {
+  dash() {
+    this.deck.fetch().then((data) => {
       this.render(
         <UserView
-        onDeckSelect={(id)=> this.goto('deck/'+id)}/>
+        data={data}
+        onDeckClick={(id)=> this.goto('decks/'+id)}
+        onAddDeckClick={()=> this.goto('addDeck')}/>
       );
     });
   },
 
   deckView(id) {
-    this.card.fetch().then(() => {
+    
+    let baseUrl = 'https://rocky-garden-9800.herokuapp.com/decks/';
+    let thisId = `${id}`;
+    let endofurl = '/cards';
+    // console.log(`${baseUrl}${id}/cards`);
+
+    let request = $.ajax({
+      url: `${baseUrl}${id}/cards`,
+      method:'GET',
+    });
+
+    request.then((data) => {
+      console.log(data)
       this.render(
-        <deckViewComponent
+        <deckView
+        data={data.cards}
         onCardSelect = {() => this.goto('card/:id')}
         onAddCardClick = {() => this.goto('addCard')}
-        onBackBtnClick = {() => this.goto('deck')}/>
+        onBackBtnClick = {() => this.goto('decks')}/>
       );
    });  
   },
@@ -182,7 +195,7 @@ let Router = Backbone.Router.extend({
   addDeck(){
     this.render(
       <addDeck
-      onBackBtnClick={() => this.goto('deck')}
+      onBackBtnClick={() => this.goto('decks')}
       onSubmitClick={(title) =>{
         letnewQuestion = document.querySelector('.enterTitle').value;
         letnewDeck = new DeckCollection ({
