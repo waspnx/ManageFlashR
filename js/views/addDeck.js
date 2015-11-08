@@ -5,9 +5,20 @@ import Backbone from 'backbone';
 
 export default React.createClass({
 
-submitHandler(){
-  this.props.onSubmitClick();
+
+
+submitHandler(x){
+  x.preventDefault();
+  this.props.onSubmitClick(this.state.Title);
 },
+
+updateTitle(x) { 
+    let newTitle = x.currentTarget.value;
+
+    this.setState({
+      Title: newTitle
+    });
+  },
 
 backBtnHandler(){
   this.props.onBackBtnClick();
@@ -22,8 +33,8 @@ backBtnHandler(){
      
       <h1> Enter your deck title: </h1>
       <form>
-        <input type='text' placeholder='Title' className='enterTitle'></input>
-        <button onClick={() => this.submitHandler()}>Submit</button>
+        <input type='text' placeholder='Title' className='enterTitle' onChange={this.updateTitle}></input>
+        <button onClick={this.submitHandler}>Submit</button>
       </form>
 
     </div>

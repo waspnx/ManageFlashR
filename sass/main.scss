@@ -2,6 +2,71 @@
 @import "neat";
 @import "font-awesome";
 
+$bg: #5E7686;
+$grey: ;
+
+$border: ;
+
+
 body {
-  background: #e2ebf3;
+  background: $bg;
+}
+
+.wrapper {
+  width: 100%;
+}
+
+.login {
+  background-image: url('../images/flash-bg.png');
+  background-position: center;
+  background-size: contain;
+  margin: 0 auto;
+  height: 766px;
+  max-width: 500px;
+  position: relative;
+
+  .field {
+    position: absolute;
+    left: 25%;
+  }
+
+  .username {
+    bottom: 200px;
+    border-radius: 5px;
+    line-height: 2em;
+    width: 50%;
+  }
+
+  .password {
+    bottom: 135px;
+    border-radius: 5px;
+    line-height: 2em;
+    width: 50%;
+  }
+
+  .button {
+    position: absolute;
+    bottom: 90px;
+    border-radius: 5px;
+    width: 20%;
+  }
+
+  .logBtn {
+    left: 25%;
+  }
+
+  .regBtn {
+    left: 55%;
+  }
+}
+
+.deckThumbList {
+
+}
+.deckThumb {
+  border: 2px solid $grey;
+  border-radius: 5px;
+  margin-left: 5px 2% 5px 2%;
+  width: 15%;
+  height: 50px;
 }
