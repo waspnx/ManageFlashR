@@ -9,7 +9,7 @@ export default React.createClass({
   },
 
   addDeckHandler() {
-    this.props.onAddDeckClick
+    this.props.onAddDeckClick();
   },
 
   processData(deck) {

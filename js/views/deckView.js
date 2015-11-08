@@ -7,17 +7,6 @@ import _ from 'underscore';
 
 export default React.createClass({
 
-  processCards(data) {
-    let onCardSelect= this.props.onCardSelect;
-    return (
-      <div className='cardContainer' key={data.id} 
-        onClick ={()=> onCardSelect(data.id)}>
-        <span>Question: {data.question}</span>
-        <span>Answer: {data.answer}</span>
-      </div>
-     )
-  },
-
   addCardHandler(route){
     this.props.onAddCardClick(route);
   },
@@ -26,16 +15,24 @@ export default React.createClass({
     this.props.onBackBtnClick(route);
   },
 
+  processCards(card) {
+    let onCardSelect= this.props.onCardSelect;
+    return (
+      <div className='cardContainer' key={card.id} 
+        onClick ={()=> onCardSelect(card.id)}>
+        <span>Question: {card.question}</span>
+        <span>Answer: {card.answer}</span>
+      </div>
+     )
+  },
+
   render() {
-    console.log(this)
     return(
       <div className='deckViewContainer'>
-
-          {this.props.data.cards.map(this.processCards)}
-
+          <div className='data'>{this.props.data.cards.map(this.processCards)}</div>
         <div className="btns">
-          <i className="fa fa-plus" onClick={() => this.addCardHandler()}></i>
-          <button className="backBtn" onClick={() => this.backBtnHandler()}>back</button>
+          <i className="fa fa-plus" onClick={this.addCardHandler}></i>
+          <button className="backBtn" onClick={this.backBtnHandler}>back</button>
         </div>    
       </div>
     );
