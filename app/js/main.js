@@ -361,6 +361,17 @@ var Router = _backbone2['default'].Router.extend({
     });
   },
 
+  ReqAuth: function ReqAuth() {
+    _jsCookie2['default'].get('user').then(function () {
+      var cookie = JSON.parse(_jsCookie2['default'].get('user'));
+      _jquery2['default'].ajaxSetup({
+        headers: {
+          'Access-Token': cookie.user.auth_token
+        }
+      });
+    });
+  },
+
   isLogged: function isLogged() {
     if (_jsCookie2['default'].get('user')) {
       var cookie = JSON.parse(_jsCookie2['default'].get('user'));
@@ -452,8 +463,32 @@ var Router = _backbone2['default'].Router.extend({
     });
   },
 
-  deckView: function deckView(id) {
+  addDeck: function addDeck() {
     var _this7 = this;
+
+    var cookie = JSON.parse(_jsCookie2['default'].get('user'));
+    _jquery2['default'].ajaxSetup({
+      headers: {
+        'Access-Token': cookie.user.auth_token
+      }
+    });
+
+    this.render(_react2['default'].createElement(_views.AddDeckView, {
+      onBackBtnClick: function () {
+        return _this7.goto('decks');
+      },
+      onSubmitClick: function (title) {
+        var newDeck = new _resources.DeckModel({
+          title: title
+        });
+        newDeck.save().then(function () {
+          _this7.goto('decks');
+        });
+      } }));
+  },
+
+  deckView: function deckView(id) {
+    var _this8 = this;
 
     var baseUrl = 'https://rocky-garden-9800.herokuapp.com/decks/';
     var thisId = '' + id;
@@ -466,57 +501,32 @@ var Router = _backbone2['default'].Router.extend({
     });
 
     request.then(function (data) {
-      console.log(data);
-      _this7.render(_react2['default'].createElement('deckView', {
-        data: data.cards,
+      _this8.render(_react2['default'].createElement(_views.DeckView, {
+        data: data,
         onCardSelect: function () {
-          return _this7.goto('card/:id');
+          return _this8.goto('card/:id');
         },
         onAddCardClick: function () {
-          return _this7.goto('addCard');
+          return _this8.goto('addCard');
         },
         onBackBtnClick: function () {
-          return _this7.goto('decks');
+          return _this8.goto('decks');
         } }));
     });
-  },
-
-  imageView: function imageView() {},
-
-  start: function start() {
-    _backbone2['default'].history.start();
-  },
-
-  addDeck: function addDeck() {
-    var _this8 = this;
-
-    console.log('hello');
-    this.render(_react2['default'].createElement(_views.AddDeckView, {
-      onBackBtnClick: function () {
-        return _this8.goto('deck');
-      },
-      onSubmitClick: function (title) {
-        var newDeck = new _resources.DeckModel({
-          Title: title
-        });
-        newDeck.save().then(function () {
-          _this8.goto('addCard');
-        });
-      } }));
   },
 
   addCard: function addCard() {
     var _this9 = this;
 
     this.render(_react2['default'].createElement(_views.AddCardView, {
-      onCancelClick: this.goto('deck/:deckID'),
+      onCancelClick: this.goto('decks/:deckID'),
       onAddCard: function (quest, ans) {
         var cardAddition = new _resources.CardModel({
           Question: quest,
           Answer: ans
         });
         cardAddition.save().then(function () {
-          return _this9.goto('deck/:deckID');
+          return _this9.goto('decks/:deckID');
         });
       } }));
   }
@@ -541,10 +551,6 @@ var _react2 = _interopRequireDefault(_react);
 exports["default"] = _react2["default"].createClass({
   displayName: "addCard",
 
-  submitHandler: function submitHandler(e) {
-    e.preventDefault();
-    this.props.onAddCard(this.state.Answer, this.state.Question);
-  },
   // e stands for event
   // setting changed state to new state (question and answer)
   updateQuestion: function updateQuestion(e) {
@@ -628,8 +634,17 @@ var _backbone2 = _interopRequireDefault(_backbone);
 exports['default'] = _react2['default'].createClass({
   displayName: 'addDeck',
 
-  submitHandler: function submitHandler() {
-    this.props.onSubmitClick();
+  submitHandler: function submitHandler(x) {
+    x.preventDefault();
+    this.props.onSubmitClick(this.state.Title);
+  },
+
+  updateTitle: function updateTitle(x) {
+    var newTitle = x.currentTarget.value;
+
+    this.setState({
+      Title: newTitle
+    });
   },
 
   backBtnHandler: function backBtnHandler() {
@@ -657,12 +672,10 @@ exports['default'] = _react2['default'].createClass({
       _react2['default'].createElement(
         'form',
         null,
-        _react2['default'].createElement('input', { type: 'text', placeholder: 'Title', className: 'enterTitle' }),
+        _react2['default'].createElement('input', { type: 'text', placeholder: 'Title', className: 'enterTitle', onChange: this.updateTitle }),
         _react2['default'].createElement(
           'button',
-          { onClick: function () {
-              return _this.submitHandler();
-            } },
+          { onClick: this.submitHandler },
           'Submit'
         )
       )
@@ -698,29 +711,6 @@ var _underscore2 = _interopRequireDefault(_underscore);
 exports['default'] = _react2['default'].createClass({
   displayName: 'deckView',
 
-  processCards: function processCards(data) {
-    var onCardSelect = this.props.onCardSelect;
-    return _react2['default'].createElement(
-      'div',
-      { className: 'cardContainer', key: data.id,
-        onClick: function () {
-          return onCardSelect(data.id);
-        } },
-      _react2['default'].createElement(
-        'span',
-        null,
-        'Question: ',
-        data.question
-      ),
-      _react2['default'].createElement(
-        'span',
-        null,
-        'Answer: ',
-        data.answer
-      )
-    );
-  },
-
   addCardHandler: function addCardHandler(route) {
     this.props.onAddCardClick(route);
   },
@@ -729,25 +719,45 @@ exports['default'] = _react2['default'].createClass({
     this.props.onBackBtnClick(route);
   },
 
-  render: function render() {
-    var _this = this;
+  processCards: function processCards(card) {
+    var onCardSelect = this.props.onCardSelect;
+    return _react2['default'].createElement(
+      'div',
+      { className: 'cardContainer', key: card.id,
+        onClick: function () {
+          return onCardSelect(card.id);
+        } },
+      _react2['default'].createElement(
+        'span',
+        null,
+        'Question: ',
+        card.question
+      ),
+      _react2['default'].createElement(
+        'span',
+        null,
+        'Answer: ',
+        card.answer
+      )
+    );
+  },
 
-    console.log(this);
+  render: function render() {
     return _react2['default'].createElement(
       'div',
       { className: 'deckViewContainer' },
-      this.props.data.cards.map(this.processCards),
+      _react2['default'].createElement(
+        'div',
+        { className: 'data' },
+        this.props.data.cards.map(this.processCards)
+      ),
       _react2['default'].createElement(
         'div',
         { className: 'btns' },
-        _react2['default'].createElement('i', { className: 'fa fa-plus', onClick: function () {
-            return _this.addCardHandler();
-          } }),
+        _react2['default'].createElement('i', { className: 'fa fa-plus', onClick: this.addCardHandler }),
         _react2['default'].createElement(
           'button',
-          { className: 'backBtn', onClick: function () {
-              return _this.backBtnHandler();
-            } },
+          { className: 'backBtn', onClick: this.backBtnHandler },
           'back'
         )
       )
@@ -1174,7 +1184,7 @@ exports['default'] = _react2['default'].createClass({
   },
 
   addDeckHandler: function addDeckHandler() {
-    this.props.onAddDeckClick;
+    this.props.onAddDeckClick();
   },
 
   processData: function processData(deck) {

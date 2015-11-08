@@ -102,6 +102,17 @@ let Router = Backbone.Router.extend({
     });
   },
 
+  ReqAuth() {
+    Cookies.get('user').then(()=>{
+      let cookie = JSON.parse(Cookies.get('user'));
+      $.ajaxSetup({
+        headers: {
+         'Access-Token': cookie.user.auth_token
+        }
+      });
+    });
+  },
+
   isLogged() {
     if (Cookies.get('user')) {
       let cookie = JSON.parse(Cookies.get('user'));
@@ -179,6 +190,27 @@ let Router = Backbone.Router.extend({
     });
   },
 
+  addDeck() {
+    let cookie = JSON.parse(Cookies.get('user'));
+    $.ajaxSetup({
+      headers: {
+       'Access-Token': cookie.user.auth_token
+      }
+    });
+
+    this.render(
+      <AddDeckView
+        onBackBtnClick={() => this.goto('decks')}
+        onSubmitClick={(title) =>{
+          let newDeck = new DeckModel ({
+            title: title,
+          })
+          newDeck.save().then(() => {this.goto('decks')})
+        }
+      }/>
+    );
+  },
+
   deckView(id) {
     
     let baseUrl = 'https://rocky-garden-9800.herokuapp.com/decks/';
@@ -192,10 +224,9 @@ let Router = Backbone.Router.extend({
     });
 
     request.then((data) => {
-      console.log(data)
       this.render(
-        <deckView
-        data={data.cards}
+        <DeckView
+        data={data}
         onCardSelect = {() => this.goto('card/:id')}
         onAddCardClick = {() => this.goto('addCard')}
         onBackBtnClick = {() => this.goto('decks')}/>
@@ -203,46 +234,19 @@ let Router = Backbone.Router.extend({
     });  
   },
 
- imageView() {
-    
-  },
-
-  start() {
-    Backbone.history.start();
-  },
-
-  addDeck(){
-    console.log('hello')
-    this.render(
-      <AddDeckView
-        onBackBtnClick={() => this.goto('deck')}
-        onSubmitClick={(title) =>{
-          let newDeck = new DeckModel ({
-            Title: title,
-          })
-        newDeck.save().then(() => {
-          this.goto('addCard')})
-        }
-      }/>
-    )
-  },
-
   addCard() {
     this.render(
       <AddCardView 
-        onCancelClick={this.goto('deck/:deckID')}
+        onCancelClick={this.goto('decks/:deckID')}
         onAddCard={(quest, ans) => {
           let cardAddition = new CardModel({
             Question: quest,
             Answer: ans
           })
-          cardAddition.save().then(()=> this.goto('deck/:deckID'));
+          cardAddition.save().then(()=> this.goto('decks/:deckID'));
         }}/>
      );
    },
-
-
-
 
 });
 export default Router;
