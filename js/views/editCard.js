@@ -17,7 +17,7 @@ export default React.createClass({
     let newValue = e.currentTarget.value;
 
     this.setState({
-      Question: newValue
+      question: newValue
     })
   },
 
@@ -25,7 +25,7 @@ export default React.createClass({
     let newValue = e.currentTarget.value;
 
     this.setState({
-      Answer: newValue
+      answer: newValue
     })
   },
 
@@ -34,19 +34,24 @@ export default React.createClass({
     this.props.onSubmitClick(this.state.question, this.state.answer);
   },
 
+  deleteHandler(e) {
+    e.preventDefault();
+    this.props.onDeleteClick()
+  },
+
   render() {
     return (
       <div>
         <form>
           <h2>Question</h2>
-          <input type="text" 
-            onChange={this.updateQuestion} 
-            value={this.state.question}/>
+          <input type="textarea" 
+            value={this.state.question}
+            onChange={this.updateQuestion}/>
           <h2>Answer</h2>
-          <input type="text" 
-            onChange={this.updateAnswer} 
-            placeholder={this.state.answer}/>
-          <button>Delete Card</button>
+          <input type="text"
+            value={this.state.answer} 
+            onChange={this.updateAnswer}/>
+          <button onClick={this.deleteHandler}>Delete Card</button>
           <input type="submit" onClick={this.submitHandler} value='Save Card'></input>
         </form>
       </div>

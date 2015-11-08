@@ -253,35 +253,55 @@ let Router = Backbone.Router.extend({
     });  
   },
  
-  saveEdit(quest, ans, deckId, cardId) {
-    this.card.get(cardId).save({
+  saveEdit(quest, ans, cardId) {
+    let thatId = `${cardId}`;
+    console.log(this.card.get(thatId));
+    this.setHeaders();
+    this.card.get(thatId).then(()=> save({
       Question: quest,
       Answer: ans
-    }).then(() => this.goto('deck/'+ deckId));
+    })).then(() => this.goto('deck/'+ deckId));
   },
 
-  cardView(cardId) {
+  cardView(deckId, cardId) {
     this.setHeaders();
-    console.log('hi');
 
     let baseUrl = 'https://rocky-garden-9800.herokuapp.com/decks/';
-    let thisId = `${cardId}`;
+    let thisId = `${deckId}`;
+    let thatId = `${cardId}`;
 
-    this.card.fetch({url: baseUrl+thisId+'/cards'}).then((data) => {this.render(
+    this.card.fetch({url: baseUrl+thisId+'/cards'})
+    .then((data) => 
+    this.render(
       <EditCardView 
-        data={data.cards}
-        onSubmitClick={ (quest, ans) => this.saveEdit(quest, ans, cardId) }/>
-      );
-    });
-  },
+        data={(data.cards.filter((x) => {
+          return x.id === Number(thatId)
+        })).pop()}
+        onSubmitClick={(quest,ans) => {
+          let newCard = new CardModel ({
+            id: thatId,
+            question: quest,
+            answer: ans
+          })
+          newCard.save({},{url: 'https://rocky-garden-9800.herokuapp.com/cards/'+thatId}).then(() => {this.goto('decks/'+thisId)})
+        }}
+        onDeleteClick={
+          () => {
+            this.setHeaders();
+            let deadCard = new CardModel({
+              id: thatId
+            })
+            deadCard.destroy({
+              url: 'https://rocky-garden-9800.herokuapp.com/cards/'+thatId,
+              wait: true
+            }).then(this.goto('decks/'+thisId))
+          }
+        }/>
+    )
+  )},
 
   addCard(deckId) {
-    let cookie = JSON.parse(Cookies.get('user'));
-      $.ajaxSetup({
-        headers: {
-         'Access-Token': cookie.user.auth_token
-      }
-    })
+    this.setHeaders();
 
     let baseUrl = 'https://rocky-garden-9800.herokuapp.com/decks/'; 
     let thisId = `${deckId}`;

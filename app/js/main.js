@@ -536,31 +536,55 @@ var Router = _backbone2['default'].Router.extend({
     });
   },
 
-  saveEdit: function saveEdit(quest, ans, deckId, cardId) {
+  saveEdit: function saveEdit(quest, ans, cardId) {
     var _this9 = this;
 
-    this.card.get(cardId).save({
-      Question: quest,
-      Answer: ans
+    var thatId = '' + cardId;
+    console.log(this.card.get(thatId));
+    this.setHeaders();
+    this.card.get(thatId).then(function () {
+      return save({
+        Question: quest,
+        Answer: ans
+      });
     }).then(function () {
       return _this9.goto('deck/' + deckId);
     });
   },
 
-  cardView: function cardView(cardId) {
+  cardView: function cardView(deckId, cardId) {
     var _this10 = this;
 
     this.setHeaders();
-    console.log('hi');
 
     var baseUrl = 'https://rocky-garden-9800.herokuapp.com/decks/';
-    var thisId = '' + cardId;
+    var thisId = '' + deckId;
+    var thatId = '' + cardId;
 
     this.card.fetch({ url: baseUrl + thisId + '/cards' }).then(function (data) {
-      _this10.render(_react2['default'].createElement(_views.EditCardView, {
-        data: data.cards,
+      return _this10.render(_react2['default'].createElement(_views.EditCardView, {
+        data: data.cards.filter(function (x) {
+          return x.id === Number(thatId);
+        }).pop(),
         onSubmitClick: function (quest, ans) {
-          return _this10.saveEdit(quest, ans, cardId);
+          var newCard = new _resources.CardModel({
+            id: thatId,
+            question: quest,
+            answer: ans
+          });
+          newCard.save({}, { url: 'https://rocky-garden-9800.herokuapp.com/cards/' + thatId }).then(function () {
+            _this10.goto('decks/' + thisId);
+          });
+        },
+        onDeleteClick: function () {
+          _this10.setHeaders();
+          var deadCard = new _resources.CardModel({
+            id: thatId
+          });
+          deadCard.destroy({
+            url: 'https://rocky-garden-9800.herokuapp.com/cards/' + thatId,
+            wait: true
+          }).then(_this10.goto('decks/' + thisId));
         } }));
     });
   },
@@ -568,12 +592,7 @@ var Router = _backbone2['default'].Router.extend({
   addCard: function addCard(deckId) {
     var _this11 = this;
 
-    var cookie = JSON.parse(_jsCookie2['default'].get('user'));
-    _jquery2['default'].ajaxSetup({
-      headers: {
-        'Access-Token': cookie.user.auth_token
-      }
-    });
+    this.setHeaders();
 
     var baseUrl = 'https://rocky-garden-9800.herokuapp.com/decks/';
     var thisId = '' + deckId;
@@ -862,7 +881,7 @@ exports["default"] = _react2["default"].createClass({
     var newValue = e.currentTarget.value;
 
     this.setState({
-      Question: newValue
+      question: newValue
     });
   },
 
@@ -870,13 +889,18 @@ exports["default"] = _react2["default"].createClass({
     var newValue = e.currentTarget.value;
 
     this.setState({
-      Answer: newValue
+      answer: newValue
     });
   },
 
   submitHandler: function submitHandler(e) {
     e.preventDefault();
     this.props.onSubmitClick(this.state.question, this.state.answer);
+  },
+
+  deleteHandler: function deleteHandler(e) {
+    e.preventDefault();
+    this.props.onDeleteClick();
   },
 
   render: function render() {
@@ -891,20 +915,20 @@ exports["default"] = _react2["default"].createClass({
           null,
           "Question"
         ),
-        _react2["default"].createElement("input", { type: "text",
-          onChange: this.updateQuestion,
-          value: this.state.question }),
+        _react2["default"].createElement("input", { type: "textarea",
+          value: this.state.question,
+          onChange: this.updateQuestion }),
         _react2["default"].createElement(
           "h2",
           null,
           "Answer"
         ),
         _react2["default"].createElement("input", { type: "text",
-          onChange: this.updateAnswer,
-          placeholder: this.state.answer }),
+          value: this.state.answer,
+          onChange: this.updateAnswer }),
         _react2["default"].createElement(
           "button",
-          null,
+          { onClick: this.deleteHandler },
           "Delete Card"
         ),
         _react2["default"].createElement("input", { type: "submit", onClick: this.submitHandler, value: "Save Card" })
