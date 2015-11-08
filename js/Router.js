@@ -140,6 +140,8 @@ let Router = Backbone.Router.extend({
   },
 
   registerPage() {
+    setHeaders();
+    
     ReactDom.render(
       <RegisterPage 
         user={Cookies.getJSON('user')}
@@ -149,7 +151,7 @@ let Router = Backbone.Router.extend({
   },
 
   register(user,name,email,pass) {
-    console.log($('#use').val())
+    setHeaders();
 
     let request = $.ajax({
       url: `https://rocky-garden-9800.herokuapp.com/signup`,
