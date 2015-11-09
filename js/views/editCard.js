@@ -4,7 +4,7 @@ export default React.createClass({
 
   //data is placeholder for the value being passed in
   getInitialState() {
-    console.log(this.props.data)
+    // console.log(this.props.data)
     return {
       answer: this.props.data.answer,
       question: this.props.data.question

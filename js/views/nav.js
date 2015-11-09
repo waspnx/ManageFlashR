@@ -17,12 +17,20 @@ export default React.createClass({
   //     }
   // },
 
+  goHome() {
+    this.props.onHomeClick();
+  },
+
+  logout() {
+    this.props.onLogoutClick();
+  },
+
   render() {
-    console.log('GOD DAMMIT')
+    // console.log('GOD DAMMIT')
     return (
       <div className="navbar">
-        <button onNavigate={this.props.goHome}>Home</button>
-        <button>Logout</button>
+        <button className='homenav' onClick={this.goHome}>Home</button>
+        <button className='logoutnav' onClick={this.logout}>Logout</button>
       </div>
     );
   }

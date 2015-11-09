@@ -34,6 +34,7 @@ let Router = Backbone.Router.extend({
     'loginPage'                   : 'loginPage',
     'login'                       : 'login',
     'isLogged'                    : 'isLogged',
+    'logout'                      : 'logout', 
     'registerPage'                : 'registerPage',
     'decks'                       : 'dash',
     'decks/:deckID'               : 'deckView',
@@ -90,20 +91,29 @@ let Router = Backbone.Router.extend({
       // }
   },
 
-// Home Route (redirect)
+// Nav and Home Route (redirect)
+  
+  nav() {
+    this.render(<NavView
+      onHomeClick={()=>this.goto('')}
+      onLogoutClick={()=>this.goto('logout')}
+    />
+    );
+  },
+
   home() {
-    this.user.fetch().then(() => {
-      this.render(<HomeView
-        onHomeClick={() => this.goto('')}
-        onLoginClick={() => this.goto('login')}
-        onLogoutClick={()=> this.goto('logout')}
-        onRegisterClick={() => this.goto('register')}/>
-      );
-    });
+    // this.user.fetch({url: 'https://rocky-garden-9800.herokuapp.com/login'}).then(() => {
+    //   this.render(<HomeView
+    //     onHomeClick={() => this.goto('')}
+    //     onLoginClick={() => this.goto('login')}
+    //     onLogoutClick={()=> this.goto('logout')}
+    //     onRegisterClick={() => this.goto('register')}/>
+    //   );
+    // });
     this.goto('isLogged');
   },
 
-// Login Page and function, Login check.
+// Login Page and function, Login check, Logout.
 
   loginPage() {
     ReactDom.render(
@@ -154,12 +164,27 @@ let Router = Backbone.Router.extend({
     }
   },
 
+  logout()  {
+    this.setHeaders();
+    Cookies.remove('user');
+    $.ajaxSetup ({
+      headers: {
+        'Access-Token': null
+      }
+    });
+    console.log(Cookies.get('user'))
+    this.goto('')
+  },
+
 // Registration
 
   registerPage() {
     this.render(
       <wrap>
-        <NavView/>
+        <NavView
+          onHomeClick={()=>this.goto('')}
+          onLogoutClick={()=>this.goto('logout')}
+        />
         <RegisterPage 
           user={Cookies.getJSON('user')}
           onRegisterClick={(user,pass,fullname,email) => {
@@ -181,10 +206,16 @@ let Router = Backbone.Router.extend({
   dash() {
     this.deck.fetch().then((data) => {
       this.render(
+      <wrap>
+        <NavView
+          onHomeClick={()=>this.goto('')}
+          onLogoutClick={()=>this.goto('logout')}
+        />
         <UserView
         data={data}
         onDeckClick={(id)=> this.goto('decks/'+id)}
         onAddDeckClick={()=> this.goto('addDeck')}/>
+      </wrap>
       );
     });
   },
@@ -198,18 +229,23 @@ let Router = Backbone.Router.extend({
          'Access-Token': cookie.user.auth_token
       }
     })
-
     this.render(
-      <AddDeckView
-        onBackBtnClick={() => this.goto('decks')}
-        onSubmitClick={(title) =>{
-          this.setHeaders();
-          let newDeck = new DeckModel ({
-            title: title,
-          })
-          newDeck.save().then(() => {this.goto('decks')})
-        }
-      }/>
+      <wrap>
+        <NavView
+          onHomeClick={()=>this.goto('')}
+          onLogoutClick={()=>this.goto('logout')}
+        />
+        <AddDeckView
+          onBackBtnClick={() => this.goto('decks')}
+          onSubmitClick={(title) =>{
+            this.setHeaders();
+            let newDeck = new DeckModel ({
+              title: title,
+            })
+            newDeck.save().then(() => {this.goto('decks')})
+          }
+        }/>
+      </wrap>
     );
   },
 
@@ -218,21 +254,39 @@ let Router = Backbone.Router.extend({
     let baseUrl = 'https://rocky-garden-9800.herokuapp.com/decks/';
     let thisId = `${id}`;
     // console.log(`${baseUrl}${id}/cards`);
-  // THIS IS UNNECESSARY - USE FETCH()
+    // THIS IS UNNECESSARY - USE FETCH()
         // let request = $.ajax({
         //   url: `${baseUrl}${id}/cards`,
         //   method:'GET',
         // });
-  //---------------------------------
+    //---------------------------------
     this.card.fetch({url: baseUrl+thisId+'/cards'}).then((data) => {
       this.render(
+      <wrap>
+        <NavView
+          onHomeClick={()=>this.goto('')}
+          onLogoutClick={()=>this.goto('logout')}
+        />
         <DeckView
         data={data}
         onCardSelect = {(cardId) => this.goto('decks/'+thisId+'/cards/'+cardId)}
         onAddCardClick = {() => this.goto('decks/'+thisId+'/addCard')}
-        onBackBtnClick = {() => this.goto('decks')}/>
+        onBackBtnClick = {() => this.goto('decks')}
+        onDeleteClick={
+          () => {
+            this.setHeaders();
+            let deadDeck = new DeckModel({
+              id: thisId
+            })
+            deadDeck.destroy({
+              url: 'https://rocky-garden-9800.herokuapp.com/decks/'+thisId,
+              wait: true
+            }).then(this.goto('decks'))
+          }
+        }/>
+      </wrap>
       );
-    });  
+    });
   },
  
 // Card Views and edit/add routes.
@@ -247,42 +301,49 @@ let Router = Backbone.Router.extend({
     this.card.fetch({url: baseUrl+thisId+'/cards'})
     .then((data) => 
     this.render(
-      <EditCardView 
-        data={(data.cards.filter((x) => {
-          return x.id === Number(thatId)
-        })).pop()}
-        onSubmitClick={(quest,ans) => {
-          let newCard = new CardModel ({
-            id: thatId,
-            question: quest,
-            answer: ans
-          })
-          newCard.save({},{url: 'https://rocky-garden-9800.herokuapp.com/cards/'+thatId}).then(() => {this.goto('decks/'+thisId)})
-        }}
-        onDeleteClick={
-          () => {
-            this.setHeaders();
-            let deadCard = new CardModel({
-              id: thatId
+      <wrap>
+        <NavView
+          onHomeClick={()=>this.goto('')}
+          onLogoutClick={()=>this.goto('logout')}
+        />
+        <EditCardView 
+          data={(data.cards.filter((x) => {
+            return x.id === Number(thatId)
+          })).pop()}
+          onSubmitClick={(quest,ans) => {
+            let newCard = new CardModel ({
+              id: thatId,
+              question: quest,
+              answer: ans
             })
-            deadCard.destroy({
-              url: 'https://rocky-garden-9800.herokuapp.com/cards/'+thatId,
-              wait: true
-            }).then(this.goto('decks/'+thisId))
+            newCard.save({},{url: 'https://rocky-garden-9800.herokuapp.com/cards/'+thatId}).then(() => {this.goto('decks/'+thisId)})
+          }}
+          onDeleteClick={
+            () => {
+              this.setHeaders();
+              let deadCard = new CardModel({
+                id: thatId
+              })
+              deadCard.destroy({
+                url: 'https://rocky-garden-9800.herokuapp.com/cards/'+thatId,
+                wait: true
+              }).then(this.goto('decks/'+thisId))
+            }
           }
-        }/>
+        />
+      </wrap>
     )
   )},
 
-  saveEdit(quest, ans, cardId) {
-    let thatId = `${cardId}`;
-    console.log(this.card.get(thatId));
-    this.setHeaders();
-    this.card.get(thatId).then(()=> save({
-      Question: quest,
-      Answer: ans
-    })).then(() => this.goto('deck/'+ deckId));
-  },
+  // saveEdit(quest, ans, cardId) {
+  //   let thatId = `${cardId}`;
+  //   console.log(this.card.get(thatId));
+  //   this.setHeaders();
+  //   this.card.get(thatId).then(()=> save({
+  //     Question: quest,
+  //     Answer: ans
+  //   })).then(() => this.goto('deck/'+ deckId));
+  // },
 
   addCard(deckId) {
     this.setHeaders();
@@ -291,17 +352,24 @@ let Router = Backbone.Router.extend({
     let thisId = `${deckId}`;
     // let endofurl = '/cards';
     this.render(
-      <AddCardView 
-        onCancelClick={()=> this.goto('decks/'+ deckId)}
-        onSubmit={(quest, ans) => {
-          this.setHeaders();
-          this.card.create({
-            question: quest,
-            answer: ans
-          },{url: baseUrl + thisId + '/cards'})
-          this.goto('decks/'+thisId)
-        }}/>
-     );
+      <wrap>
+        <NavView
+          onHomeClick={()=>this.goto('')}
+          onLogoutClick={()=>this.goto('logout')}
+        />
+        <AddCardView 
+          onCancelClick={()=> this.goto('decks/'+ deckId)}
+          onSubmit={(quest, ans) => {
+            this.setHeaders();
+            this.card.create({
+              question: quest,
+              answer: ans
+            },{url: baseUrl + thisId + '/cards'})
+            this.goto('decks/'+thisId)
+          }}
+        />
+      </wrap>
+    );
    },
 
 });

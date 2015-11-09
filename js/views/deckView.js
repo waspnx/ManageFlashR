@@ -11,6 +11,12 @@ export default React.createClass({
     this.props.onAddCardClick();
   },
 
+  onDeleteHandler(){
+    if (window.confirm('Are you sure you want to DELETE this deck? Cards in the deck will be lost.')) {
+      this.props.onDeleteClick();
+    };
+  },
+
   backBtnHandler(route){
     this.props.onBackBtnClick(route);
   },
@@ -20,8 +26,8 @@ export default React.createClass({
     return (
       <div className='cardContainer' key={card.id} 
         onClick ={()=> onCardSelect(card.id)}>
-        <span>Question: {card.question}</span>
-        <span>Answer: {card.answer}</span>
+        <div className='quest'>Question: {card.question}</div>
+        <div className='ans'>Answer: {card.answer}</div>
       </div>
      )
   },
@@ -32,8 +38,9 @@ export default React.createClass({
       <div className='deckViewContainer'>
           <div className='data'>{this.props.data.cards.map(this.processCards)}</div>
         <div className="btns">
-          <i className="fa fa-plus" onClick={this.addCardHandler}></i>
-          <button className="backBtn" onClick={this.backBtnHandler}>back</button>
+          <button className='addBtn' onClick={this.addCardHandler}><i className="fa fa-plus"></i></button>
+          <button className='delete deleteDeck' onClick={this.onDeleteHandler}>Delete Deck</button>
+          <button className="backBtn" onClick={this.backBtnHandler}>&#60; Back &#60;</button>
         </div>    
       </div>
     );
