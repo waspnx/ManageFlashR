@@ -289,6 +289,7 @@ var Router = _backbone2['default'].Router.extend({
     'loginPage': 'loginPage',
     'login': 'login',
     'isLogged': 'isLogged',
+    'logout': 'logout',
     'registerPage': 'registerPage',
     'decks': 'dash',
     'decks/:deckID': 'deckView',
@@ -345,29 +346,34 @@ var Router = _backbone2['default'].Router.extend({
     // }
   },
 
-  // Home Route (redirect)
-  home: function home() {
+  // Nav and Home Route (redirect)
+
+  nav: function nav() {
     var _this = this;
 
-    this.user.fetch().then(function () {
-      _this.render(_react2['default'].createElement(HomeView, {
-        onHomeClick: function () {
-          return _this.goto('');
-        },
-        onLoginClick: function () {
-          return _this.goto('login');
-        },
-        onLogoutClick: function () {
-          return _this.goto('logout');
-        },
-        onRegisterClick: function () {
-          return _this.goto('register');
-        } }));
-    });
+    this.render(_react2['default'].createElement(_views.NavView, {
+      onHomeClick: function () {
+        return _this.goto('');
+      },
+      onLogoutClick: function () {
+        return _this.goto('logout');
+      }
+    }));
+  },
+
+  home: function home() {
+    // this.user.fetch({url: 'https://rocky-garden-9800.herokuapp.com/login'}).then(() => {
+    //   this.render(<HomeView
+    //     onHomeClick={() => this.goto('')}
+    //     onLoginClick={() => this.goto('login')}
+    //     onLogoutClick={()=> this.goto('logout')}
+    //     onRegisterClick={() => this.goto('register')}/>
+    //   );
+    // });
     this.goto('isLogged');
   },
 
-  // Login Page and function, Login check.
+  // Login Page and function, Login check, Logout.
 
   loginPage: function loginPage() {
     var _this2 = this;
@@ -423,6 +429,18 @@ var Router = _backbone2['default'].Router.extend({
     }
   },
 
+  logout: function logout() {
+    this.setHeaders();
+    _jsCookie2['default'].remove('user');
+    _jquery2['default'].ajaxSetup({
+      headers: {
+        'Access-Token': null
+      }
+    });
+    console.log(_jsCookie2['default'].get('user'));
+    this.goto('');
+  },
+
   // Registration
 
   registerPage: function registerPage() {
@@ -431,7 +449,14 @@ var Router = _backbone2['default'].Router.extend({
     this.render(_react2['default'].createElement(
       'wrap',
       null,
-      _react2['default'].createElement(_views.NavView, null),
+      _react2['default'].createElement(_views.NavView, {
+        onHomeClick: function () {
+          return _this4.goto('');
+        },
+        onLogoutClick: function () {
+          return _this4.goto('logout');
+        }
+      }),
       _react2['default'].createElement(_views.RegisterPage, {
         user: _jsCookie2['default'].getJSON('user'),
         onRegisterClick: function (user, pass, fullname, email) {
@@ -454,14 +479,26 @@ var Router = _backbone2['default'].Router.extend({
     var _this5 = this;
 
     this.deck.fetch().then(function (data) {
-      _this5.render(_react2['default'].createElement(_views.UserView, {
-        data: data,
-        onDeckClick: function (id) {
-          return _this5.goto('decks/' + id);
-        },
-        onAddDeckClick: function () {
-          return _this5.goto('addDeck');
-        } }));
+      _this5.render(_react2['default'].createElement(
+        'wrap',
+        null,
+        _react2['default'].createElement(_views.NavView, {
+          onHomeClick: function () {
+            return _this5.goto('');
+          },
+          onLogoutClick: function () {
+            return _this5.goto('logout');
+          }
+        }),
+        _react2['default'].createElement(_views.UserView, {
+          data: data,
+          onDeckClick: function (id) {
+            return _this5.goto('decks/' + id);
+          },
+          onAddDeckClick: function () {
+            return _this5.goto('addDeck');
+          } })
+      ));
     });
   },
 
@@ -476,20 +513,31 @@ var Router = _backbone2['default'].Router.extend({
         'Access-Token': cookie.user.auth_token
       }
     });
-
-    this.render(_react2['default'].createElement(_views.AddDeckView, {
-      onBackBtnClick: function () {
-        return _this6.goto('decks');
-      },
-      onSubmitClick: function (title) {
-        _this6.setHeaders();
-        var newDeck = new _resources.DeckModel({
-          title: title
-        });
-        newDeck.save().then(function () {
-          _this6.goto('decks');
-        });
-      } }));
+    this.render(_react2['default'].createElement(
+      'wrap',
+      null,
+      _react2['default'].createElement(_views.NavView, {
+        onHomeClick: function () {
+          return _this6.goto('');
+        },
+        onLogoutClick: function () {
+          return _this6.goto('logout');
+        }
+      }),
+      _react2['default'].createElement(_views.AddDeckView, {
+        onBackBtnClick: function () {
+          return _this6.goto('decks');
+        },
+        onSubmitClick: function (title) {
+          _this6.setHeaders();
+          var newDeck = new _resources.DeckModel({
+            title: title
+          });
+          newDeck.save().then(function () {
+            _this6.goto('decks');
+          });
+        } })
+    ));
   },
 
   deckView: function deckView(id) {
@@ -506,17 +554,39 @@ var Router = _backbone2['default'].Router.extend({
     // });
     //---------------------------------
     this.card.fetch({ url: baseUrl + thisId + '/cards' }).then(function (data) {
-      _this7.render(_react2['default'].createElement(_views.DeckView, {
-        data: data,
-        onCardSelect: function (cardId) {
-          return _this7.goto('decks/' + thisId + '/cards/' + cardId);
-        },
-        onAddCardClick: function () {
-          return _this7.goto('decks/' + thisId + '/addCard');
-        },
-        onBackBtnClick: function () {
-          return _this7.goto('decks');
-        } }));
+      _this7.render(_react2['default'].createElement(
+        'wrap',
+        null,
+        _react2['default'].createElement(_views.NavView, {
+          onHomeClick: function () {
+            return _this7.goto('');
+          },
+          onLogoutClick: function () {
+            return _this7.goto('logout');
+          }
+        }),
+        _react2['default'].createElement(_views.DeckView, {
+          data: data,
+          onCardSelect: function (cardId) {
+            return _this7.goto('decks/' + thisId + '/cards/' + cardId);
+          },
+          onAddCardClick: function () {
+            return _this7.goto('decks/' + thisId + '/addCard');
+          },
+          onBackBtnClick: function () {
+            return _this7.goto('decks');
+          },
+          onDeleteClick: function () {
+            _this7.setHeaders();
+            var deadDeck = new _resources.DeckModel({
+              id: thisId
+            });
+            deadDeck.destroy({
+              url: 'https://rocky-garden-9800.herokuapp.com/decks/' + thisId,
+              wait: true
+            }).then(_this7.goto('decks'));
+          } })
+      ));
     });
   },
 
@@ -532,69 +602,89 @@ var Router = _backbone2['default'].Router.extend({
     var thatId = '' + cardId;
 
     this.card.fetch({ url: baseUrl + thisId + '/cards' }).then(function (data) {
-      return _this8.render(_react2['default'].createElement(_views.EditCardView, {
-        data: data.cards.filter(function (x) {
-          return x.id === Number(thatId);
-        }).pop(),
-        onSubmitClick: function (quest, ans) {
-          var newCard = new _resources.CardModel({
-            id: thatId,
-            question: quest,
-            answer: ans
-          });
-          newCard.save({}, { url: 'https://rocky-garden-9800.herokuapp.com/cards/' + thatId }).then(function () {
-            _this8.goto('decks/' + thisId);
-          });
-        },
-        onDeleteClick: function () {
-          _this8.setHeaders();
-          var deadCard = new _resources.CardModel({
-            id: thatId
-          });
-          deadCard.destroy({
-            url: 'https://rocky-garden-9800.herokuapp.com/cards/' + thatId,
-            wait: true
-          }).then(_this8.goto('decks/' + thisId));
-        } }));
+      return _this8.render(_react2['default'].createElement(
+        'wrap',
+        null,
+        _react2['default'].createElement(_views.NavView, {
+          onHomeClick: function () {
+            return _this8.goto('');
+          },
+          onLogoutClick: function () {
+            return _this8.goto('logout');
+          }
+        }),
+        _react2['default'].createElement(_views.EditCardView, {
+          data: data.cards.filter(function (x) {
+            return x.id === Number(thatId);
+          }).pop(),
+          onSubmitClick: function (quest, ans) {
+            var newCard = new _resources.CardModel({
+              id: thatId,
+              question: quest,
+              answer: ans
+            });
+            newCard.save({}, { url: 'https://rocky-garden-9800.herokuapp.com/cards/' + thatId }).then(function () {
+              _this8.goto('decks/' + thisId);
+            });
+          },
+          onDeleteClick: function () {
+            _this8.setHeaders();
+            var deadCard = new _resources.CardModel({
+              id: thatId
+            });
+            deadCard.destroy({
+              url: 'https://rocky-garden-9800.herokuapp.com/cards/' + thatId,
+              wait: true
+            }).then(_this8.goto('decks/' + thisId));
+          }
+        })
+      ));
     });
   },
 
-  saveEdit: function saveEdit(quest, ans, cardId) {
-    var _this9 = this;
-
-    var thatId = '' + cardId;
-    console.log(this.card.get(thatId));
-    this.setHeaders();
-    this.card.get(thatId).then(function () {
-      return save({
-        Question: quest,
-        Answer: ans
-      });
-    }).then(function () {
-      return _this9.goto('deck/' + deckId);
-    });
-  },
+  // saveEdit(quest, ans, cardId) {
+  //   let thatId = `${cardId}`;
+  //   console.log(this.card.get(thatId));
+  //   this.setHeaders();
+  //   this.card.get(thatId).then(()=> save({
+  //     Question: quest,
+  //     Answer: ans
+  //   })).then(() => this.goto('deck/'+ deckId));
+  // },
 
   addCard: function addCard(deckId) {
-    var _this10 = this;
+    var _this9 = this;
 
     this.setHeaders();
 
     var baseUrl = 'https://rocky-garden-9800.herokuapp.com/decks/';
     var thisId = '' + deckId;
     // let endofurl = '/cards';
-    this.render(_react2['default'].createElement(_views.AddCardView, {
-      onCancelClick: function () {
-        return _this10.goto('decks/' + deckId);
-      },
-      onSubmit: function (quest, ans) {
-        _this10.setHeaders();
-        _this10.card.create({
-          question: quest,
-          answer: ans
-        }, { url: baseUrl + thisId + '/cards' });
-        _this10.goto('decks/' + thisId);
-      } }));
+    this.render(_react2['default'].createElement(
+      'wrap',
+      null,
+      _react2['default'].createElement(_views.NavView, {
+        onHomeClick: function () {
+          return _this9.goto('');
+        },
+        onLogoutClick: function () {
+          return _this9.goto('logout');
+        }
+      }),
+      _react2['default'].createElement(_views.AddCardView, {
+        onCancelClick: function () {
+          return _this9.goto('decks/' + deckId);
+        },
+        onSubmit: function (quest, ans) {
+          _this9.setHeaders();
+          _this9.card.create({
+            question: quest,
+            answer: ans
+          }, { url: baseUrl + thisId + '/cards' });
+          _this9.goto('decks/' + thisId);
+        }
+      })
+    ));
   }
 
 });
@@ -781,6 +871,12 @@ exports['default'] = _react2['default'].createClass({
     this.props.onAddCardClick();
   },
 
+  onDeleteHandler: function onDeleteHandler() {
+    if (window.confirm('Are you sure you want to DELETE this deck? Cards in the deck will be lost.')) {
+      this.props.onDeleteClick();
+    };
+  },
+
   backBtnHandler: function backBtnHandler(route) {
     this.props.onBackBtnClick(route);
   },
@@ -794,14 +890,14 @@ exports['default'] = _react2['default'].createClass({
           return onCardSelect(card.id);
         } },
       _react2['default'].createElement(
-        'span',
-        null,
+        'div',
+        { className: 'quest' },
         'Question: ',
         card.question
       ),
       _react2['default'].createElement(
-        'span',
-        null,
+        'div',
+        { className: 'ans' },
         'Answer: ',
         card.answer
       )
@@ -820,11 +916,20 @@ exports['default'] = _react2['default'].createClass({
       _react2['default'].createElement(
         'div',
         { className: 'btns' },
-        _react2['default'].createElement('i', { className: 'fa fa-plus', onClick: this.addCardHandler }),
+        _react2['default'].createElement(
+          'button',
+          { className: 'addBtn', onClick: this.addCardHandler },
+          _react2['default'].createElement('i', { className: 'fa fa-plus' })
+        ),
+        _react2['default'].createElement(
+          'button',
+          { className: 'delete deleteDeck', onClick: this.onDeleteHandler },
+          'Delete Deck'
+        ),
         _react2['default'].createElement(
           'button',
           { className: 'backBtn', onClick: this.backBtnHandler },
-          'back'
+          '< Back <'
         )
       )
     );
@@ -851,7 +956,7 @@ exports["default"] = _react2["default"].createClass({
 
   //data is placeholder for the value being passed in
   getInitialState: function getInitialState() {
-    console.log(this.props.data);
+    // console.log(this.props.data)
     return {
       answer: this.props.data.answer,
       question: this.props.data.question
@@ -1081,19 +1186,27 @@ exports['default'] = _react2['default'].createClass({
   //     }
   // },
 
+  goHome: function goHome() {
+    this.props.onHomeClick();
+  },
+
+  logout: function logout() {
+    this.props.onLogoutClick();
+  },
+
   render: function render() {
-    console.log('GOD DAMMIT');
+    // console.log('GOD DAMMIT')
     return _react2['default'].createElement(
       'div',
       { className: 'navbar' },
       _react2['default'].createElement(
         'button',
-        { onNavigate: this.props.goHome },
+        { className: 'homenav', onClick: this.goHome },
         'Home'
       ),
       _react2['default'].createElement(
         'button',
-        null,
+        { className: 'logoutnav', onClick: this.logout },
         'Logout'
       )
     );

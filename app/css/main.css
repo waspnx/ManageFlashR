@@ -2027,12 +2027,44 @@ html {
 body {
   background: #5E7686; }
 
+.banner {
+  background-image: url("../images/logo.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  min-height: 150px;
+  width: 100%;
+  margin: 0; }
+
 .wrapper {
   width: 100%; }
+
+.wrap {
+  width: 100%; }
+
+button {
+  border-radius: 5px;
+  border: 2px solid #213C3F;
+  padding: 6px 15px 6px 15px; }
+
+.navbar {
+  background-color: #5E7686;
+  border-top: 2px solid #213C3F;
+  border-bottom: 2px solid #213C3F;
+  width: 100%;
+  height: 50px;
+  position: relative; }
+  .navbar button {
+    position: absolute;
+    top: 6px; }
+  .navbar .homenav {
+    left: 20%; }
+  .navbar .logoutnav {
+    right: 20%; }
 
 .login {
   background-image: url("../images/flash-bg.png");
   background-position: center;
+  background-repeat: no-repeat;
   background-size: contain;
   margin: 0 auto;
   height: 766px;
@@ -2054,18 +2086,58 @@ body {
   .login .button {
     position: absolute;
     bottom: 90px;
-    border-radius: 5px;
     width: 20%; }
   .login .logBtn {
     left: 25%; }
   .login .regBtn {
     left: 55%; }
 
-.deckThumb {
-  border: 2px solid;
-  border-radius: 5px;
-  margin-left: 5px 2% 5px 2%;
-  width: 15%;
-  height: 50px; }
+.deckwrapper {
+  width: 100%;
+  padding: 50px; }
+  .deckwrapper .deckThumbList {
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto; }
+    .deckwrapper .deckThumbList .deckThumb {
+      display: inline-block;
+      border: 2px solid #213C3F;
+      background-repeat: no-repeat;
+      background-color: #F5F5F5;
+      border-radius: 5px;
+      margin: 5px 2% 5px 2%;
+      width: 150px;
+      height: 150px;
+      overflow: hidden; }
+
+.deckViewContainer {
+  width: 100%;
+  padding-top: 15px; }
+  .deckViewContainer .data {
+    width: 70%;
+    margin: 0 auto; }
+    .deckViewContainer .data .cardContainer {
+      background-color: #F5F5F5;
+      width: 200px;
+      height: 250px;
+      border: 2px solid #213C3F;
+      border-radius: 5px;
+      position: relative; }
+      .deckViewContainer .data .cardContainer div {
+        position: absolute;
+        margin-left: 1%;
+        margin-right: 1%; }
+      .deckViewContainer .data .cardContainer .quest {
+        top: 2px; }
+      .deckViewContainer .data .cardContainer .ans {
+        bottom: 0; }
+  .deckViewContainer .btns {
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px; }
+    .deckViewContainer .btns button {
+      width: 20%;
+      margin-left: 10%; }
 
 /*# sourceMappingURL=main.css.map */
